@@ -1,0 +1,192 @@
+---
+const stats = [
+	{ prefix: '$', value: 40, suffix: 'M+', label: 'Capital raised by our clients' },
+	{ prefix: '$', value: 182, suffix: 'M+', label: 'Combined client valuation' },
+	{ prefix: '', value: 5, suffix: '', label: 'Client companies acquired' },
+	{ prefix: '', value: 44, suffix: '+', label: 'Products & systems shipped' },
+];
+---
+
+<section class="impact" id="impact" aria-labelledby="impact-intro">
+	<p class="intro" id="impact-intro">
+		<strong>Built for companies where execution matters.</strong> We help ambitious teams turn complex operations into
+		reliable AI systems built to perform in the real world.
+	</p>
+
+	<ul class="stats">
+		{
+			stats.map((stat) => (
+				<li class="stat">
+					<span class="stat__value">
+						<span class="sr-only">{`${stat.prefix}${stat.value}${stat.suffix}`}</span>
+						{/* Invisible final value reserves the width so nothing shifts while counting */}
+						<span class="stat__ghost" aria-hidden="true">{`${stat.prefix}${stat.value}${stat.suffix}`}</span>
+						<span
+							class="stat__count"
+							aria-hidden="true"
+							data-prefix={stat.prefix}
+							data-value={stat.value}
+							data-suffix={stat.suffix}
+						>{`${stat.prefix}${stat.value}${stat.suffix}`}</span>
+					</span>
+					<span class="stat__label">{stat.label}</span>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.impact {
+		background: #ffffff;
+		padding: max(115px, calc(115 * var(--u))) max(60px, calc(60 * var(--u))) max(150px, calc(150 * var(--u)));
+	}
+
+	.intro {
+		max-width: max(996px, calc(996 * var(--u)));
+		margin: 0;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
+		line-height: 1.3;
+		color: #5e5e5e;
+	}
+
+	.intro strong {
+		font-weight: 400;
+		color: #0c2b15;
+	}
+
+	.stats {
+		display: flex;
+		justify-content: space-between;
+		gap: 32px;
+		margin: max(72px, calc(72 * var(--u))) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.stat {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: max(24px, calc(24 * var(--u)));
+		text-align: center;
+	}
+
+	.stat__value {
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: max(86px, calc(86 * var(--u)));
+		font-weight: 300;
+		line-height: 1;
+		letter-spacing: -0.03em;
+		color: #0a0a0a;
+		display: grid;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.stat__ghost,
+	.stat__count {
+		grid-area: 1 / 1;
+		justify-self: center;
+	}
+
+	.stat__ghost {
+		visibility: hidden;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.stat__label {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: max(20px, calc(20 * var(--u)));
+		font-weight: 300;
+		line-height: 1.3;
+		color: #5e5e5e;
+	}
+
+	@media (max-width: 1100px) {
+		.stats {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			row-gap: 56px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.impact {
+			padding: 72px 16px 88px;
+		}
+
+		.intro {
+			font-size: 20px;
+		}
+
+		.stats {
+			margin-top: 48px;
+			row-gap: 40px;
+			column-gap: 16px;
+		}
+
+		.stat {
+			gap: 10px;
+		}
+
+		.stat__value {
+			font-size: clamp(40px, 12vw, 86px);
+		}
+
+		.stat__label {
+			font-size: 15px;
+		}
+	}
+</style>
+
+<script>
+	const DURATION = 2000;
+	const STAGGER = 150;
+
+	// Fast start, gentle landing
+	const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+	const counters = document.querySelectorAll<HTMLElement>('.stat__count');
+	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	function render(el: HTMLElement, value: number) {
+		el.textContent = `${el.dataset.prefix ?? ''}${Math.round(value)}${el.dataset.suffix ?? ''}`;
+	}
+
+	function countUp(el: HTMLElement, delay: number) {
+		const target = Number(el.dataset.value);
+		let start = 0;
+
+		const step = (now: number) => {
+			if (!start) start = now + delay;
+			const t = Math.min(Math.max((now - start) / DURATION, 0), 1);
+			render(el, target * easeOutExpo(t));
+			if (t < 1) requestAnimationFrame(step);
+		};
+		requestAnimationFrame(step);
+	}
+
+	if (counters.length && !prefersReducedMotion) {
+		counters.forEach((el) => render(el, 0));
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				counters.forEach((el, i) => countUp(el, i * STAGGER));
+				observer.disconnect();
+			},
+			{ threshold: 0.4 },
+		);
+		observer.observe(document.querySelector('.stats')!);
+	}
+</script>

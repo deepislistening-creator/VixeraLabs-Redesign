@@ -1,0 +1,132 @@
+---
+import AuroraSilk from './AuroraSilk.astro';
+import Header from './Header.astro';
+import FeaturedCard from './FeaturedCard.astro';
+import ArrowButton from './ArrowButton.astro';
+---
+
+<section class="hero">
+	<AuroraSilk speed={3.2} resolution={0.85} />
+	<Header />
+	<FeaturedCard />
+
+	<div class="content">
+		<p class="label">AI system consultancy</p>
+		<h1 class="heading">AI agents run the workflows.<br />You make the final call.</h1>
+		<p class="subheading">
+			We build AI systems that remove repetitive work while keeping critical decisions in your hands.
+		</p>
+		<div class="ctas">
+			<ArrowButton href="#contact" label="Map My Workflows" />
+			<a class="cta cta--secondary" href="#work">View Our Work</a>
+		</div>
+	</div>
+</section>
+
+<style>
+	.hero {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+		min-height: 640px;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		--inter: 'Inter', system-ui, sans-serif;
+	}
+
+	.content {
+		position: relative;
+		z-index: 1;
+		/* Clear the 40px + 70px header */
+		padding: 110px 50px 0;
+	}
+
+	.label {
+		margin: 0 0 max(36px, calc(36 * var(--u)));
+		font-family: var(--inter);
+		font-size: max(14px, calc(14 * var(--u)));
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.heading {
+		max-width: max(1100px, calc(1100 * var(--u)));
+		margin: 0;
+		/* Trying Source Serif 4. To revert: 'Lora', weight 500, line-height 1.15, no letter-spacing */
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: max(62px, calc(62 * var(--u)));
+		font-weight: 400;
+		line-height: 1.08;
+		letter-spacing: -0.01em;
+		color: #0c2b15;
+		text-wrap: balance;
+	}
+
+	.subheading {
+		max-width: max(640px, calc(640 * var(--u)));
+		text-wrap: pretty;
+		margin: max(28px, calc(28 * var(--u))) 0 0;
+		font-family: var(--inter);
+		font-size: max(18px, calc(18 * var(--u)));
+		font-weight: 400;
+		line-height: 1.5;
+		color: #313131;
+	}
+
+	.ctas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: max(12px, calc(12 * var(--u)));
+		margin-top: max(48px, calc(48 * var(--u)));
+	}
+
+	.cta {
+		height: 52px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 14px;
+		font-family: var(--inter);
+		font-size: 15px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: #0c2b15;
+		text-decoration: none;
+		transition: background-color 0.25s ease;
+	}
+
+	.cta:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 2px;
+	}
+
+	.cta--secondary {
+		min-width: 160px;
+		padding: 0 24px;
+		background: rgba(255, 255, 255, 0.6);
+		-webkit-backdrop-filter: blur(43px);
+		backdrop-filter: blur(43px);
+		box-shadow: 0 4px 16px rgba(12, 43, 21, 0.08);
+	}
+
+	.cta--secondary:hover {
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	@media (max-width: 768px) {
+		.content {
+			padding: 100px 16px 0;
+		}
+
+		.heading {
+			font-size: clamp(36px, 9vw, 62px);
+		}
+
+		.subheading {
+			font-size: 16px;
+		}
+	}
+</style>

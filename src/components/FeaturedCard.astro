@@ -1,0 +1,708 @@
+---
+interface Feature {
+	area: string;
+	score: number;
+	flow: [string, string, string];
+	stat: { label: string; split: [number, number, number]; legend: [string, string, string] };
+	text: string;
+	link: { label: string; href: string };
+}
+
+// Placeholder figures: replace with real numbers before launch
+const features: Feature[] = [
+	{
+		area: 'Support ops',
+		score: 84,
+		flow: ['Ticket in', 'AI triage', 'Human review'],
+		stat: { label: 'Tickets resolved by AI', split: [73, 19, 8], legend: ['Resolved by AI', 'Needs review', 'Escalated'] },
+		text: 'Support agents that triage and resolve routine tickets, and hand the edge cases to your team.',
+		link: { label: 'Customer support automation', href: '#work' },
+	},
+	{
+		area: 'Finance ops',
+		score: 91,
+		flow: ['Invoice in', 'AI extract', 'Approve'],
+		stat: { label: 'Invoices processed', split: [86, 10, 4], legend: ['Auto-processed', 'Flagged', 'Manual'] },
+		text: 'Invoices read, matched and coded automatically. Your finance team approves, not types.',
+		link: { label: 'Finance operations', href: '#work' },
+	},
+	{
+		area: 'Sales ops',
+		score: 78,
+		flow: ['Lead in', 'AI qualify', 'Rep call'],
+		stat: { label: 'Leads qualified', split: [64, 24, 12], legend: ['Auto-qualified', 'Needs a rep', 'Disqualified'] },
+		text: 'Every inbound lead researched, scored and routed before a rep picks up the phone.',
+		link: { label: 'Sales pipeline automation', href: '#work' },
+	},
+];
+
+const INTERVAL_MS = 5500;
+---
+
+<aside class="featured" aria-label="Featured work" style={`--interval:${INTERVAL_MS}ms`}>
+	<div class="deck">
+		{
+			features.map((feature, i) => (
+				<article
+					class:list={['slide', { 'is-active': i === 0 }]}
+					style={`--pos:${i}`}
+					inert={i !== 0}
+				>
+					<div class="slide__inner">
+					<div class="featured__head">
+						<span class="featured__eyebrow">
+							<span class="featured__dot" />
+							Featured
+						</span>
+						<div class="featured__pips">
+							{features.map((f, p) => (
+								<button
+									class:list={['featured__pip', { 'is-active': p === i }]}
+									type="button"
+									data-index={p}
+									aria-label={`Show ${f.link.label}`}
+									aria-current={p === i ? 'true' : 'false'}
+								>
+									<span class="featured__fill" />
+								</button>
+							))}
+						</div>
+					</div>
+
+					<div class="tiles" aria-hidden="true">
+						{/* Gauge */}
+						<div class="tile tile--gauge" style="--i:0">
+							<span class="tile__label">Automation score</span>
+							<svg class="gauge" viewBox="0 0 100 60">
+								<path class="gauge__track" d="M12 54 A38 38 0 0 1 88 54" pathLength="100" />
+								<path
+									class="gauge__value"
+									d="M12 54 A38 38 0 0 1 88 54"
+									pathLength="100"
+									style={`--offset:${100 - feature.score}`}
+								/>
+							</svg>
+							<span class="gauge__score">
+								{feature.score}
+								<small>/ 100</small>
+							</span>
+							<span class="tile__caption">{feature.area}</span>
+						</div>
+
+						{/* Workflow */}
+						<div class="tile tile--flow" style="--i:1">
+							<span class="tile__label">Workflow</span>
+							<ol class="flow">
+								{feature.flow.map((step, s) => (
+									<li class:list={['flow__step', { 'flow__step--ai': s === 1 }]} style={`--s:${s}`}>
+										<span class="flow__dot" />
+										{step}
+									</li>
+								))}
+							</ol>
+						</div>
+
+						{/* Stats */}
+						<div class="tile tile--stat" style="--i:2">
+							<span class="tile__label">{feature.stat.label}</span>
+							<span class="stat__value">{feature.stat.split[0]}%</span>
+							<span class="stat__bar">
+								{feature.stat.split.map((w, s) => (
+									<span class={`stat__seg stat__seg--${s}`} style={`--w:${w}%;--s:${s}`} />
+								))}
+							</span>
+							<ul class="stat__legend">
+								{feature.stat.legend.map((item, s) => (
+									<li>
+										<span class={`stat__key stat__seg--${s}`} />
+										{item} · {feature.stat.split[s]}%
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
+
+					<p class="slide__text">{feature.text}</p>
+					<a class="slide__link" href={feature.link.href}>
+						{feature.link.label}
+						<svg viewBox="0 0 18 16" fill="none" aria-hidden="true">
+							<path
+								d="M1 8h15.5M10 1.5 16.5 8 10 14.5"
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					</a>
+					</div>
+				</article>
+			))
+		}
+	</div>
+</aside>
+
+<style>
+	.featured {
+		--ink: #0c2b15;
+		--green: #96f878;
+		--ease: cubic-bezier(0.22, 1, 0.36, 1);
+		position: absolute;
+		right: 50px;
+		bottom: 50px;
+		z-index: 1;
+		width: 440px;
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #212427;
+	}
+
+	/* ---------- header ---------- */
+
+	.featured__head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 16px;
+	}
+
+	.featured__eyebrow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--ink);
+	}
+
+	.featured__dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #3ddc6b;
+		box-shadow: 0 0 0 0 rgba(61, 220, 107, 0.6);
+		animation: featured-pulse 2s ease-out infinite;
+	}
+
+	.featured__pips {
+		display: flex;
+		gap: 6px;
+	}
+
+	.featured__pip {
+		position: relative;
+		width: 22px;
+		height: 4px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
+		background: rgba(12, 43, 21, 0.15);
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	/* Enlarge the click target without changing the look */
+	.featured__pip::after {
+		content: '';
+		position: absolute;
+		inset: -8px -3px;
+	}
+
+	.featured__pip:focus-visible {
+		outline: 2px solid var(--ink);
+		outline-offset: 3px;
+	}
+
+	.featured__fill {
+		position: absolute;
+		inset: 0;
+		background: var(--ink);
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+
+	/* The active pip's fill doubles as the rotation timer: when it finishes, the next feature shows */
+	.slide.is-active .featured__pip.is-active .featured__fill {
+		animation: featured-fill var(--interval) linear forwards;
+	}
+
+	.featured:hover .featured__fill,
+	.featured:focus-within .featured__fill {
+		animation-play-state: paused;
+	}
+
+	/* ---------- card deck ---------- */
+
+	/*
+	 * Every feature is its own glass card, stacked in one grid cell. --pos is the card's place in
+	 * the stack (0 = front); cards further back sit higher, smaller and fainter so their top edges
+	 * peek out. On change the front card plays deck-to-back (drops, slips behind, rises to the back)
+	 * while the next card eases forward.
+	 */
+	.deck {
+		display: grid;
+		isolation: isolate;
+	}
+
+	.slide {
+		grid-area: 1 / 1;
+		padding: 20px;
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.6);
+		-webkit-backdrop-filter: blur(43px);
+		backdrop-filter: blur(43px);
+		box-shadow: 0 10px 40px rgba(12, 43, 21, 0.08);
+		transform-origin: 50% 0;
+		z-index: calc(10 - var(--pos));
+		transform: translateY(calc(var(--pos) * -14px)) scale(calc(1 - var(--pos) * 0.05));
+		opacity: calc(1 - var(--pos) * 0.25);
+		transition:
+			transform 0.8s var(--ease),
+			opacity 0.8s ease;
+	}
+
+	.slide.is-active {
+		transition-delay: 0.22s;
+	}
+
+	.slide.is-leaving {
+		animation: deck-to-back 0.95s cubic-bezier(0.65, 0, 0.35, 1);
+	}
+
+	/* Cards behind the front one show only their glass edge */
+	.slide__inner {
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.slide.is-active .slide__inner {
+		opacity: 1;
+		transition: opacity 0.4s ease 0.3s;
+	}
+
+	.tiles {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+	}
+
+	.tile,
+	.slide__text,
+	.slide__link {
+		opacity: 0;
+		transform: translateY(12px);
+		transition:
+			opacity 0.35s ease,
+			transform 0.35s ease;
+	}
+
+	.is-active .tile,
+	.is-active .slide__text,
+	.is-active .slide__link {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 0.6s ease,
+			transform 0.7s var(--ease);
+	}
+
+	.is-active .tile {
+		transition-delay: calc(0.4s + var(--i) * 0.09s);
+	}
+
+	.is-active .slide__text {
+		transition-delay: 0.65s;
+	}
+
+	.is-active .slide__link {
+		transition-delay: 0.73s;
+	}
+
+	.tile {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 128px;
+		padding: 10px;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.tile__label {
+		font-size: 8.5px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		line-height: 1.3;
+		text-transform: uppercase;
+	}
+
+	.tile__caption {
+		margin-top: auto;
+		font-size: 9px;
+		opacity: 0.7;
+	}
+
+	/* gauge tile */
+	.tile--gauge {
+		background: var(--ink);
+		color: #ffffff;
+	}
+
+	.tile--gauge .tile__label {
+		opacity: 0.75;
+	}
+
+	.gauge {
+		width: 74%;
+		margin: 6px auto 0;
+		overflow: visible;
+	}
+
+	.gauge path {
+		fill: none;
+		stroke-width: 7;
+		stroke-linecap: round;
+	}
+
+	.gauge__track {
+		stroke: rgba(255, 255, 255, 0.14);
+	}
+
+	.gauge__value {
+		stroke: var(--green);
+		stroke-dasharray: 100;
+		stroke-dashoffset: 100;
+		transition: stroke-dashoffset 0.4s ease;
+	}
+
+	.is-active .gauge__value {
+		stroke-dashoffset: var(--offset);
+		transition: stroke-dashoffset 1.3s var(--ease) 0.35s;
+	}
+
+	.gauge__score {
+		margin-top: 2px;
+		text-align: center;
+		font-size: 20px;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.gauge__score small {
+		font-size: 10px;
+		font-weight: 400;
+		opacity: 0.6;
+	}
+
+	.tile--gauge .tile__caption {
+		text-align: center;
+	}
+
+	/* workflow tile */
+	.tile--flow {
+		background:
+			linear-gradient(rgba(12, 43, 21, 0.05) 1px, transparent 1px) 0 0 / 12px 12px,
+			linear-gradient(90deg, rgba(12, 43, 21, 0.05) 1px, transparent 1px) 0 0 / 12px 12px,
+			rgba(255, 255, 255, 0.85);
+		color: var(--ink);
+	}
+
+	.tile--flow .tile__label {
+		opacity: 0.6;
+	}
+
+	.flow {
+		display: flex;
+		flex-direction: column;
+		gap: 9px;
+		margin: auto 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.flow__step {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		height: 22px;
+		padding: 0 8px;
+		border: 1px solid rgba(12, 43, 21, 0.1);
+		border-radius: 7px;
+		background: #ffffff;
+		font-size: 9.5px;
+		font-weight: 500;
+		white-space: nowrap;
+		animation: flow-active 3s ease-in-out infinite;
+		animation-delay: calc(var(--s) * 1s);
+	}
+
+	/* connector to the next step */
+	.flow__step:not(:last-child)::after {
+		content: '';
+		position: absolute;
+		left: 11px;
+		top: 100%;
+		width: 1px;
+		height: 9px;
+		background: rgba(12, 43, 21, 0.25);
+	}
+
+	.flow__dot {
+		width: 5px;
+		height: 5px;
+		flex: none;
+		border-radius: 50%;
+		background: rgba(12, 43, 21, 0.35);
+	}
+
+	.flow__step--ai .flow__dot {
+		background: #3ddc6b;
+	}
+
+	/* stats tile */
+	.tile--stat {
+		background: rgba(255, 255, 255, 0.85);
+		color: var(--ink);
+	}
+
+	.tile--stat .tile__label {
+		opacity: 0.6;
+	}
+
+	.stat__value {
+		margin-top: auto;
+		font-size: 24px;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.stat__bar {
+		display: flex;
+		gap: 2px;
+		height: 5px;
+		margin: 8px 0;
+	}
+
+	.stat__seg {
+		height: 100%;
+		border-radius: 3px;
+	}
+
+	.stat__bar .stat__seg {
+		width: 0;
+		transition: width 0.4s ease;
+	}
+
+	.is-active .stat__bar .stat__seg {
+		width: var(--w);
+		transition: width 0.9s var(--ease);
+		transition-delay: calc(0.45s + var(--s) * 0.12s);
+	}
+
+	.stat__seg--0 {
+		background: #3ddc6b;
+	}
+
+	.stat__seg--1 {
+		background: #c9d3cc;
+	}
+
+	.stat__seg--2 {
+		background: var(--ink);
+	}
+
+	.stat__legend {
+		display: grid;
+		gap: 3px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: 8.5px;
+		color: rgba(12, 43, 21, 0.7);
+		white-space: nowrap;
+	}
+
+	.stat__legend li {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	.stat__key {
+		width: 5px;
+		height: 5px;
+		flex: none;
+		border-radius: 1px;
+	}
+
+	/* ---------- text + link ---------- */
+
+	.slide__text {
+		margin: 16px 0 0;
+		font-size: 15px;
+		line-height: 1.45;
+		color: #212427;
+	}
+
+	.slide__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+		margin-top: 12px;
+		font-size: 15px;
+		font-weight: 500;
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.slide__link svg {
+		width: 18px;
+		transition: transform 0.35s var(--ease);
+	}
+
+	.slide__link:hover svg,
+	.slide__link:focus-visible svg {
+		transform: translateX(4px);
+	}
+
+	.slide__link:focus-visible {
+		outline: 2px solid var(--ink);
+		outline-offset: 3px;
+		border-radius: 4px;
+	}
+
+	/* ---------- keyframes ---------- */
+
+	/* No 100% keyframe: the card finishes wherever its new --pos puts it */
+	@keyframes deck-to-back {
+		0% {
+			z-index: 20;
+			transform: translateY(0) scale(1);
+			opacity: 1;
+		}
+		45% {
+			z-index: 20;
+			transform: translateY(42px) scale(0.97);
+			opacity: 0.85;
+		}
+		46% {
+			z-index: 0;
+		}
+	}
+
+	@keyframes featured-fill {
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	@keyframes featured-pulse {
+		0% {
+			box-shadow: 0 0 0 0 rgba(61, 220, 107, 0.6);
+		}
+		70%,
+		100% {
+			box-shadow: 0 0 0 7px rgba(61, 220, 107, 0);
+		}
+	}
+
+	@keyframes flow-active {
+		0%,
+		40%,
+		100% {
+			background: #ffffff;
+			border-color: rgba(12, 43, 21, 0.1);
+		}
+		15%,
+		25% {
+			background: #e3fddb;
+			border-color: rgba(61, 220, 107, 0.6);
+		}
+	}
+
+	/* ---------- responsive + motion ---------- */
+
+	@media (max-width: 1500px) {
+		.featured {
+			width: 400px;
+		}
+
+		.tile {
+			height: 120px;
+		}
+	}
+
+	/* Below this the card would collide with the headline */
+	@media (max-width: 1340px) {
+		.featured {
+			display: none;
+		}
+	}
+
+	/* No auto-rotation or decorative motion; features can still be switched with the pips */
+	@media (prefers-reduced-motion: reduce) {
+		.featured__pip.is-active .featured__fill {
+			animation: none;
+			transform: scaleX(1);
+		}
+
+		.featured__dot,
+		.flow__step,
+		.slide.is-leaving {
+			animation: none;
+		}
+
+		.slide,
+		.slide__inner {
+			transition: none !important;
+		}
+
+		.tile,
+		.slide__text,
+		.slide__link,
+		.gauge__value,
+		.stat__bar .stat__seg {
+			transition: none !important;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.featured').forEach((card) => {
+		const slides = [...card.querySelectorAll<HTMLElement>('.slide')];
+		const count = slides.length;
+		let index = 0;
+
+		function show(next: number) {
+			if (next === index) return;
+			const leaving = slides[index];
+			index = next;
+
+			// Send the old front card behind the stack, then restack everything around the new front
+			leaving.classList.remove('is-leaving');
+			void leaving.offsetWidth; // restart the animation if it is still running
+			leaving.classList.add('is-leaving');
+
+			slides.forEach((slide, i) => {
+				const pos = (i - index + count) % count;
+				slide.style.setProperty('--pos', String(pos));
+				slide.classList.toggle('is-active', pos === 0);
+				slide.inert = pos !== 0;
+			});
+		}
+
+		card.querySelectorAll<HTMLButtonElement>('.featured__pip').forEach((pip) => {
+			pip.addEventListener('click', () => show(Number(pip.dataset.index)));
+		});
+
+		card.addEventListener('animationend', (event) => {
+			const target = event.target as HTMLElement;
+			// The front card's active pip fill is the timer
+			if (target.classList.contains('featured__fill')) show((index + 1) % count);
+			if (target.classList.contains('is-leaving')) target.classList.remove('is-leaving');
+		});
+	});
+</script>

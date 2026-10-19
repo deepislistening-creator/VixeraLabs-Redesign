@@ -1,0 +1,103 @@
+---
+interface Props {
+	href: string;
+	label: string;
+	class?: string;
+}
+
+const { href, label, class: className } = Astro.props;
+---
+
+<a class:list={['arrow-btn', className]} href={href}>
+	<span class="arrow-btn__clip">
+		<span class="arrow-btn__track">
+			{
+				['lead', 'label', 'trail'].map((part) =>
+					part === 'label' ? (
+						<span>{label}</span>
+					) : (
+						<svg class="arrow-btn__arrow" viewBox="0 0 18 16" fill="none" aria-hidden="true">
+							<path
+								d="M1 8h15.5M10 1.5 16.5 8 10 14.5"
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					),
+				)
+			}
+		</span>
+	</span>
+</a>
+
+<style>
+	.arrow-btn {
+		--arrow: 18px;
+		--arrow-gap: 10px;
+		--shift: calc(var(--arrow) + var(--arrow-gap));
+		height: 52px;
+		min-width: 213px;
+		padding: 0 24px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 14px;
+		background: #96f878;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 15px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: #0c2b15;
+		text-decoration: none;
+		transition: background-color 0.25s ease;
+	}
+
+	.arrow-btn:hover {
+		background: #a8fa8e;
+	}
+
+	.arrow-btn:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 2px;
+	}
+
+	/*
+	 * Arrow swap, transform-only so it stays on the GPU:
+	 * the track is [arrow][label][arrow] inside a clip window one arrow narrower than the track.
+	 * At rest the track is shifted left (label + right arrow visible); on hover it slides right
+	 * (left arrow + label visible). Nothing resizes, so there is no layout work per frame.
+	 */
+	.arrow-btn__clip {
+		display: flex;
+		overflow: hidden;
+	}
+
+	.arrow-btn__track {
+		display: flex;
+		align-items: center;
+		gap: var(--arrow-gap);
+		margin-right: calc(-1 * var(--shift));
+		transform: translate3d(calc(-1 * var(--shift)), 0, 0);
+		transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+		will-change: transform;
+	}
+
+	.arrow-btn__arrow {
+		flex: none;
+		width: var(--arrow);
+		height: auto;
+	}
+
+	.arrow-btn:hover .arrow-btn__track,
+	.arrow-btn:focus-visible .arrow-btn__track {
+		transform: translate3d(0, 0, 0);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.arrow-btn__track {
+			transition: none;
+		}
+	}
+</style>

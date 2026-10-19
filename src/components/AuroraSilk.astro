@@ -1,0 +1,605 @@
+---
+import { paletteToCssVars, resolvePalette } from '../lib/aurora-palette';
+
+interface Props {
+	palette?: string[];
+	speed?: number;
+	grain?: number;
+	blur?: number;
+	loopSeconds?: number;
+	parallax?: boolean;
+	showToggle?: boolean;
+	resolution?: number;
+	mode?: 'auto' | 'webgl' | 'css';
+	id?: string;
+	class?: string;
+	style?: string;
+}
+
+const {
+	palette,
+	speed = 1,
+	grain = 0.025,
+	blur = 1,
+	loopSeconds = 15,
+	parallax = true,
+	showToggle = true,
+	resolution = 0.6,
+	mode = 'auto',
+	id,
+	class: className,
+	style = '',
+} = Astro.props;
+
+const cssVars =
+	paletteToCssVars(resolvePalette(palette)) +
+	`--as-blur:${blur};--as-duration:${loopSeconds / Math.max(speed, 0.01)}s;`;
+---
+
+<aurora-silk
+	id={id}
+	class:list={['aurora-silk', className]}
+	style={cssVars + style}
+	data-palette={palette ? JSON.stringify(palette) : undefined}
+	data-speed={String(speed)}
+	data-grain={String(grain)}
+	data-blur={String(blur)}
+	data-loop-seconds={String(loopSeconds)}
+	data-parallax={String(parallax)}
+	data-resolution={String(resolution)}
+	data-mode={mode}
+>
+	<canvas class="canvas" aria-hidden="true"></canvas>
+
+	<div class="css" aria-hidden="true">
+		<div class="css-base"></div>
+		<div class="css-layer css-layer--lime"><div class="css-shape"></div></div>
+		<div class="css-layer css-layer--curl"><div class="css-shape"></div></div>
+		<div class="css-layer css-layer--panel"><div class="css-shape"></div></div>
+		<div class="css-layer css-layer--corner"><div class="css-shape"></div></div>
+	</div>
+
+	{
+		showToggle && (
+			<button class="toggle" type="button" aria-label="Pause background animation" aria-pressed="false">
+				<svg class="icon-pause" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+					<rect x="2" y="1.5" width="2.6" height="9" rx="0.8" fill="currentColor" />
+					<rect x="7.4" y="1.5" width="2.6" height="9" rx="0.8" fill="currentColor" />
+				</svg>
+				<svg class="icon-play" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+					<path d="M3 1.8v8.4a.7.7 0 0 0 1.05.6l7-4.2a.7.7 0 0 0 0-1.2l-7-4.2A.7.7 0 0 0 3 1.8Z" fill="currentColor" />
+				</svg>
+			</button>
+		)
+	}
+</aurora-silk>
+
+<style>
+	.aurora-silk {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		display: block;
+		overflow: hidden;
+		pointer-events: none;
+		background: var(--as-cream);
+	}
+
+	.canvas {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	.css {
+		position: absolute;
+		inset: 0;
+		display: none;
+	}
+
+	.aurora-silk[data-renderer='css'] .canvas {
+		display: none;
+	}
+
+	.aurora-silk[data-renderer='css'] .css {
+		display: block;
+	}
+
+	/* ---------- CSS fallback: an approximation of the shader composition ---------- */
+
+	.css-base {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, var(--as-green) 0%, var(--as-mintg) 30%, var(--as-cream) 85%);
+	}
+
+	/* Blur sits on the outer wrapper and clip-path on the inner child, so clipped edges blur */
+	.css-layer {
+		position: absolute;
+		inset: -8%;
+		filter: blur(calc(var(--as-blur) * 14px));
+		animation: aurora-silk-drift-a var(--as-duration) ease-in-out infinite;
+	}
+
+	.css-shape {
+		position: absolute;
+		inset: 0;
+	}
+
+	.css-layer--lime .css-shape {
+		clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+		background: linear-gradient(
+			115deg,
+			var(--as-aqua) 0%,
+			var(--as-yellow) 28%,
+			var(--as-lime) 31%,
+			var(--as-lime) 100%
+		);
+	}
+
+	.css-layer--curl {
+		animation-name: aurora-silk-drift-b;
+		animation-delay: calc(var(--as-duration) * -0.25);
+	}
+
+	.css-layer--curl .css-shape {
+		inset: 20% auto auto 4%;
+		width: 48%;
+		height: 52%;
+		border-radius: 50%;
+		background: radial-gradient(ellipse at 60% 40%, var(--as-aqua) 0%, var(--as-cream) 55%, transparent 72%);
+	}
+
+	.css-layer--panel {
+		animation-name: aurora-silk-drift-c;
+		animation-delay: calc(var(--as-duration) * -0.5);
+	}
+
+	.css-layer--panel .css-shape {
+		clip-path: polygon(25% 60%, 85% 0, 100% 0, 100% 100%, 30% 100%);
+		background: linear-gradient(155deg, var(--as-teal) 20%, var(--as-lime) 60%, var(--as-cream) 100%);
+	}
+
+	.css-layer--corner {
+		animation-name: aurora-silk-drift-b;
+		animation-delay: calc(var(--as-duration) * -0.75);
+	}
+
+	.css-layer--corner .css-shape {
+		inset: auto 6% 6% auto;
+		width: 26%;
+		height: 30%;
+		border-radius: 42%;
+		background: radial-gradient(circle at 60% 60%, var(--as-cyan) 0%, var(--as-cyan) 45%, var(--as-cream) 62%, transparent 74%);
+	}
+
+	.aurora-silk[data-paused] .css-layer {
+		animation-play-state: paused;
+	}
+
+	@keyframes aurora-silk-drift-a {
+		0%,
+		100% {
+			transform: translate(0, 0) rotate(0deg);
+		}
+		50% {
+			transform: translate(3%, -2%) rotate(4deg);
+		}
+	}
+
+	@keyframes aurora-silk-drift-b {
+		0%,
+		100% {
+			transform: translate(0, 0) rotate(0deg);
+		}
+		50% {
+			transform: translate(-3%, 2.5%) rotate(-5deg);
+		}
+	}
+
+	@keyframes aurora-silk-drift-c {
+		0%,
+		100% {
+			transform: translate(0, 0) rotate(0deg);
+		}
+		50% {
+			transform: translate(-2%, 3%) rotate(5deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.css-layer {
+			animation: none;
+		}
+	}
+
+	/* ---------- pause / play toggle ---------- */
+
+	.toggle {
+		position: absolute;
+		right: 16px;
+		bottom: 16px;
+		width: 30px;
+		height: 30px;
+		display: grid;
+		place-items: center;
+		padding: 0;
+		border: 1px solid rgba(15, 42, 20, 0.14);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.45);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+		color: #0f2a14;
+		cursor: pointer;
+		pointer-events: auto;
+	}
+
+	.toggle[hidden] {
+		display: none;
+	}
+
+	.toggle:focus-visible {
+		outline: 2px solid #0f2a14;
+		outline-offset: 2px;
+	}
+
+	.toggle[aria-pressed='true'] .icon-pause,
+	.toggle[aria-pressed='false'] .icon-play {
+		display: none;
+	}
+</style>
+
+<script>
+	import { ROLE_NAMES, resolvePalette, rgbToCss, type RGB } from '../lib/aurora-palette';
+	import { FRAGMENT_SHADER, VERTEX_SHADER } from '../lib/aurora-shader';
+
+	type Mode = 'auto' | 'webgl' | 'css';
+
+	interface Settings {
+		palette: RGB[];
+		speed: number;
+		grain: number;
+		blur: number;
+		loopSeconds: number;
+		parallax: boolean;
+		resolution: number;
+		mode: Mode;
+	}
+
+	interface GLState {
+		gl: WebGLRenderingContext;
+		program: WebGLProgram;
+		shaders: WebGLShader[];
+		buffer: WebGLBuffer;
+		uniforms: Record<'uRes' | 'uTime' | 'uLoop' | 'uBlur' | 'uGrain' | 'uMouse' | 'uPal', WebGLUniformLocation | null>;
+	}
+
+	const CONTEXT_OPTIONS: WebGLContextAttributes = {
+		alpha: false,
+		antialias: false,
+		depth: false,
+		stencil: false,
+		premultipliedAlpha: false,
+		powerPreference: 'low-power',
+	};
+
+	function toNumber(value: string | undefined, fallback: number) {
+		const n = value === undefined ? NaN : parseFloat(value);
+		return Number.isFinite(n) ? n : fallback;
+	}
+
+	function parsePalette(value: string | undefined): string[] | undefined {
+		if (!value) return undefined;
+		try {
+			const parsed = JSON.parse(value);
+			return Array.isArray(parsed) ? parsed.map(String) : undefined;
+		} catch {
+			return undefined;
+		}
+	}
+
+	function compileShader(gl: WebGLRenderingContext, type: number, source: string) {
+		const shader = gl.createShader(type);
+		if (!shader) return null;
+		gl.shaderSource(shader, source);
+		gl.compileShader(shader);
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			console.error('[AuroraSilk] shader compile failed:', gl.getShaderInfoLog(shader));
+			gl.deleteShader(shader);
+			return null;
+		}
+		return shader;
+	}
+
+	class AuroraSilkElement extends HTMLElement {
+		static observedAttributes = [
+			'data-palette',
+			'data-speed',
+			'data-grain',
+			'data-blur',
+			'data-loop-seconds',
+			'data-parallax',
+			'data-resolution',
+			'data-mode',
+		];
+
+		private settings!: Settings;
+		private canvas: HTMLCanvasElement | null = null;
+		private toggle: HTMLButtonElement | null = null;
+		private glState: GLState | null = null;
+		private palette = new Float32Array(27);
+		private reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+		private cleanups: (() => void)[] = [];
+		private isSetUp = false;
+
+		private frame = 0;
+		private last = 0;
+		private time = 0;
+		private mouse = [0, 0];
+		private mouseTarget = [0, 0];
+		private paused = false;
+		private onScreen = true;
+
+		connectedCallback() {
+			this.setup();
+		}
+
+		disconnectedCallback() {
+			this.teardown();
+		}
+
+		attributeChangedCallback(name: string) {
+			if (!this.isSetUp) return;
+			if (name === 'data-mode') {
+				this.teardown();
+				this.setup();
+				return;
+			}
+			this.readSettings();
+			if (name === 'data-resolution') this.resize();
+			// Redraw straight away so changes show while paused
+			if (!this.frame) this.draw();
+		}
+
+		private readSettings() {
+			const d = this.dataset;
+			const mode = d.mode === 'webgl' || d.mode === 'css' ? d.mode : 'auto';
+			this.settings = {
+				palette: resolvePalette(parsePalette(d.palette)),
+				speed: toNumber(d.speed, 1),
+				grain: toNumber(d.grain, 0.025),
+				blur: toNumber(d.blur, 1),
+				loopSeconds: Math.max(toNumber(d.loopSeconds, 15), 0.1),
+				parallax: d.parallax !== 'false',
+				resolution: Math.min(Math.max(toNumber(d.resolution, 0.6), 0.1), 2),
+				mode,
+			};
+
+			this.settings.palette.forEach((rgb, i) => {
+				this.palette.set(rgb, i * 3);
+				this.style.setProperty(`--as-${ROLE_NAMES[i]}`, rgbToCss(rgb));
+			});
+			this.style.setProperty('--as-blur', String(this.settings.blur));
+			this.style.setProperty(
+				'--as-duration',
+				`${this.settings.loopSeconds / Math.max(this.settings.speed, 0.01)}s`,
+			);
+			if (!this.settings.parallax) this.mouseTarget = [0, 0];
+		}
+
+		private setup() {
+			this.readSettings();
+			this.canvas = this.querySelector('canvas');
+			this.toggle = this.querySelector('.toggle');
+
+			const useGL = this.settings.mode !== 'css' && this.initGL();
+			this.dataset.renderer = useGL ? 'webgl' : 'css';
+
+			const listen = <T extends EventTarget>(target: T, type: string, fn: EventListener) => {
+				target.addEventListener(type, fn);
+				this.cleanups.push(() => target.removeEventListener(type, fn));
+			};
+
+			const resizeObserver = new ResizeObserver(() => {
+				this.resize();
+				this.draw();
+			});
+			resizeObserver.observe(this);
+			this.cleanups.push(() => resizeObserver.disconnect());
+
+			const intersectionObserver = new IntersectionObserver(([entry]) => {
+				this.onScreen = entry.isIntersecting;
+				this.updateLoop();
+			});
+			intersectionObserver.observe(this);
+			this.cleanups.push(() => intersectionObserver.disconnect());
+
+			listen(document, 'visibilitychange', () => this.updateLoop());
+			listen(this.reducedMotion, 'change', () => this.updateLoop());
+			listen(window, 'pointermove', (e) => this.onPointerMove(e as PointerEvent));
+
+			if (this.toggle) {
+				listen(this.toggle, 'click', () => {
+					this.paused = !this.paused;
+					this.updateLoop();
+				});
+			}
+
+			if (this.canvas && useGL) {
+				listen(this.canvas, 'webglcontextlost', (e) => {
+					e.preventDefault();
+					this.stopLoop();
+					this.glState = null;
+				});
+				listen(this.canvas, 'webglcontextrestored', () => {
+					if (!this.initGL()) return;
+					this.resize();
+					this.draw();
+					this.updateLoop();
+				});
+			}
+
+			this.isSetUp = true;
+			this.resize();
+			this.updateLoop();
+			this.draw();
+		}
+
+		private teardown() {
+			this.isSetUp = false;
+			this.stopLoop();
+			this.cleanups.forEach((fn) => fn());
+			this.cleanups = [];
+			this.releaseGL();
+		}
+
+		private initGL() {
+			if (!this.canvas) return false;
+			const gl = this.canvas.getContext('webgl', CONTEXT_OPTIONS) as WebGLRenderingContext | null;
+			if (!gl) return false;
+
+			const vs = compileShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER);
+			const fs = compileShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+			const program = gl.createProgram();
+			const buffer = gl.createBuffer();
+			if (!vs || !fs || !program || !buffer) return false;
+
+			gl.attachShader(program, vs);
+			gl.attachShader(program, fs);
+			gl.linkProgram(program);
+			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+				console.error('[AuroraSilk] program link failed:', gl.getProgramInfoLog(program));
+				return false;
+			}
+			gl.useProgram(program);
+
+			// One oversized triangle covering the screen
+			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+			const aPos = gl.getAttribLocation(program, 'aPos');
+			gl.enableVertexAttribArray(aPos);
+			gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+			const u = (name: string) => gl.getUniformLocation(program, name);
+			this.glState = {
+				gl,
+				program,
+				shaders: [vs, fs],
+				buffer,
+				uniforms: {
+					uRes: u('uRes'),
+					uTime: u('uTime'),
+					uLoop: u('uLoop'),
+					uBlur: u('uBlur'),
+					uGrain: u('uGrain'),
+					uMouse: u('uMouse'),
+					uPal: u('uPal'),
+				},
+			};
+			return true;
+		}
+
+		private releaseGL() {
+			const state = this.glState;
+			this.glState = null;
+			if (!state || state.gl.isContextLost()) return;
+			const { gl, program, shaders, buffer } = state;
+			gl.deleteBuffer(buffer);
+			shaders.forEach((shader) => {
+				gl.detachShader(program, shader);
+				gl.deleteShader(shader);
+			});
+			gl.deleteProgram(program);
+		}
+
+		private resize() {
+			if (!this.canvas || !this.glState) return;
+			const scale = Math.min(window.devicePixelRatio || 1, 2) * this.settings.resolution;
+			const width = Math.max(1, Math.round(this.clientWidth * scale));
+			const height = Math.max(1, Math.round(this.clientHeight * scale));
+			if (this.canvas.width !== width || this.canvas.height !== height) {
+				this.canvas.width = width;
+				this.canvas.height = height;
+			}
+			this.glState.gl.viewport(0, 0, width, height);
+		}
+
+		private draw() {
+			const state = this.glState;
+			if (!state || !this.canvas) return;
+			const { gl, uniforms } = state;
+			const { loopSeconds, blur, grain } = this.settings;
+			gl.uniform2f(uniforms.uRes, this.canvas.width, this.canvas.height);
+			gl.uniform1f(uniforms.uTime, this.time);
+			gl.uniform1f(uniforms.uLoop, loopSeconds);
+			gl.uniform1f(uniforms.uBlur, blur);
+			gl.uniform1f(uniforms.uGrain, grain);
+			gl.uniform2f(uniforms.uMouse, this.mouse[0], this.mouse[1]);
+			gl.uniform3fv(uniforms.uPal, this.palette);
+			gl.drawArrays(gl.TRIANGLES, 0, 3);
+		}
+
+		private tick = (now: number) => {
+			this.frame = requestAnimationFrame(this.tick);
+
+			// Render every display refresh: skipping frames causes uneven judder on 90-144 Hz screens
+			const dt = this.last ? Math.min((now - this.last) / 1000, 0.1) : 0;
+			this.last = now;
+
+			const { speed, loopSeconds } = this.settings;
+			this.time = (this.time + dt * speed) % loopSeconds;
+
+			const ease = Math.min(1, dt * 1.5);
+			this.mouse[0] += (this.mouseTarget[0] - this.mouse[0]) * ease;
+			this.mouse[1] += (this.mouseTarget[1] - this.mouse[1]) * ease;
+
+			this.draw();
+		};
+
+		private onPointerMove(e: PointerEvent) {
+			if (!this.settings.parallax) return;
+			const rect = this.getBoundingClientRect();
+			if (!rect.width || !rect.height) return;
+			const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+			const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1); // y up
+			this.mouseTarget = [Math.max(-1, Math.min(1, x)), Math.max(-1, Math.min(1, y))];
+		}
+
+		private updateLoop() {
+			const reduced = this.reducedMotion.matches;
+			if (this.toggle) {
+				this.toggle.hidden = reduced;
+				this.toggle.setAttribute('aria-pressed', String(this.paused));
+			}
+			this.toggleAttribute('data-paused', this.paused);
+
+			if (reduced) {
+				// Static frame at t = 0, the authored composition
+				this.stopLoop();
+				this.time = 0;
+				this.mouse = [0, 0];
+				this.draw();
+				return;
+			}
+
+			const shouldRun = !!this.glState && !this.paused && this.onScreen && !document.hidden;
+			if (shouldRun && !this.frame) {
+				this.last = 0;
+				this.frame = requestAnimationFrame(this.tick);
+			} else if (!shouldRun) {
+				this.stopLoop();
+			}
+		}
+
+		private stopLoop() {
+			if (this.frame) cancelAnimationFrame(this.frame);
+			this.frame = 0;
+		}
+	}
+
+	if (!customElements.get('aurora-silk')) {
+		customElements.define('aurora-silk', AuroraSilkElement);
+	}
+</script>

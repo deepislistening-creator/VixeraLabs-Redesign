@@ -1,0 +1,170 @@
+---
+const links = [
+	{ label: 'Home', href: '/' },
+	{ label: 'About', href: '#about' },
+	{ label: 'Service', href: '#service' },
+	{ label: 'Work', href: '#work' },
+	{ label: 'Insights', href: '#insights' },
+];
+---
+
+<header class="header">
+	<a class="brand" href="/" aria-label="VIXERA LABS home">
+		<img class="brand__logo" src="/assets/Logo.png" alt="" width="228" height="196" />
+		<span class="brand__name">VIXERA LABS</span>
+	</a>
+
+	<div class="actions">
+		<nav class="nav glass" aria-label="Main">
+			{
+				links.map((link, i) => (
+					<a class="nav__link" href={link.href} aria-current={i === 0 ? 'page' : undefined}>
+						{link.label}
+					</a>
+				))
+			}
+		</nav>
+
+		<a class="cta glass" href="#contact">Get a Free Roadmap</a>
+	</div>
+</header>
+
+<style>
+	.header {
+		position: absolute;
+		top: 40px;
+		left: 50px;
+		right: 50px;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #212427;
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		color: #0f2a14;
+		text-decoration: none;
+	}
+
+	.brand__logo {
+		display: block;
+		width: auto;
+		height: 36px;
+	}
+
+	.brand__name {
+		font-size: 22px;
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		line-height: 1;
+	}
+
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	/* White at 60% with background blur (Figma blur 86 ≈ CSS blur 43px) */
+	.glass {
+		height: 70px;
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.6);
+		-webkit-backdrop-filter: blur(43px);
+		backdrop-filter: blur(43px);
+	}
+
+	.nav {
+		width: 536px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 13px;
+	}
+
+	.nav__link {
+		display: flex;
+		align-items: center;
+		height: 44px;
+		padding: 0 18px;
+		border-radius: 14px;
+		font-size: 15px;
+		font-weight: 500;
+		text-transform: uppercase;
+		color: #212427;
+		text-decoration: none;
+		transition: background-color 0.25s ease;
+	}
+
+	.nav__link[aria-current='page'] {
+		background: #e3fddb;
+	}
+
+	.nav__link:hover {
+		background: #96f878;
+	}
+
+	.nav__link:focus-visible,
+	.cta:focus-visible {
+		outline: 2px solid #212427;
+		outline-offset: 2px;
+	}
+
+	.cta {
+		width: 213px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 16px;
+		font-weight: 600;
+		color: #212427;
+		text-decoration: none;
+		transition: background-color 0.25s ease;
+	}
+
+	.cta:hover {
+		background: rgba(255, 255, 255, 0.8);
+	}
+
+	/* The full row needs ~1100px; hide the links below that until a mobile menu exists */
+	@media (max-width: 1100px) {
+		.nav {
+			display: none;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.header {
+			left: 16px;
+			right: 16px;
+			top: 24px;
+		}
+
+		.cta {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav__link');
+
+	function select(active: HTMLAnchorElement) {
+		navLinks.forEach((link) => {
+			if (link === active) link.setAttribute('aria-current', 'page');
+			else link.removeAttribute('aria-current');
+		});
+	}
+
+	navLinks.forEach((link) => link.addEventListener('click', () => select(link)));
+
+	// Restore the selection when the page is opened at a section, e.g. /#work
+	const fromHash = [...navLinks].find((link) => link.hash && link.hash === location.hash);
+	if (fromHash) select(fromHash);
+</script>

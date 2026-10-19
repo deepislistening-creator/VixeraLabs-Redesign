@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AuroraSilk from '../components/AuroraSilk.astro';
+---
+
+<Layout title="AuroraSilk demo">
+	<section class="hero">
+		<AuroraSilk id="aurora" speed={3.2} resolution={0.85} />
+
+		<div class="content">
+			<p class="eyebrow">Folded Light</p>
+			<h1>Light, folded into&nbsp;form.</h1>
+			<p class="lede">Translucent sheets of colour that slide, tilt and curl behind your story.</p>
+			<a class="cta" href="#">Get started</a>
+		</div>
+
+		<form class="panel" aria-label="Background controls">
+			<label class="field">
+				<span>Palette</span>
+				<select id="preset">
+					<option value="green" selected>Green</option>
+					<option value="lagoon">Lagoon</option>
+					<option value="citrus">Citrus</option>
+				</select>
+			</label>
+			<label class="field">
+				<span>Speed <output id="speed-value">3.20</output></span>
+				<input id="speed" type="range" min="0" max="4" step="0.05" value="3.2" />
+			</label>
+			<label class="field">
+				<span>Edge softness <output id="blur-value">1.00</output></span>
+				<input id="blur" type="range" min="0.3" max="3" step="0.05" value="1" />
+			</label>
+			<label class="field">
+				<span>Grain <output id="grain-value">0.025</output></span>
+				<input id="grain" type="range" min="0" max="0.1" step="0.005" value="0.025" />
+			</label>
+		</form>
+	</section>
+</Layout>
+
+<style>
+	.hero {
+		position: relative;
+		height: 100vh;
+		min-height: 560px;
+		overflow: hidden;
+		display: flex;
+		align-items: flex-end;
+		font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+		color: #0f2a14;
+	}
+
+	.content {
+		position: relative;
+		z-index: 1;
+		max-width: 820px;
+		padding: 0 clamp(16px, 6vw, 96px) clamp(48px, 12vh, 128px);
+	}
+
+	.eyebrow {
+		margin: 0 0 16px;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		opacity: 0.7;
+	}
+
+	h1 {
+		margin: 0;
+		font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+		font-size: clamp(44px, 7vw, 88px);
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: -0.02em;
+	}
+
+	.lede {
+		margin: 20px 0 32px;
+		max-width: 420px;
+		font-size: 18px;
+		line-height: 1.5;
+		opacity: 0.8;
+	}
+
+	.cta {
+		display: inline-block;
+		padding: 14px 26px;
+		border-radius: 999px;
+		background: #a6f78c;
+		border: 1px solid rgba(15, 42, 20, 0.14);
+		color: #0f2a14;
+		font-weight: 600;
+		text-decoration: none;
+		transition: transform 0.2s ease, background 0.2s ease;
+	}
+
+	.cta:hover {
+		background: #b8fba2;
+		transform: translateY(-1px);
+	}
+
+	.panel {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		z-index: 2;
+		width: min(260px, calc(100% - 32px));
+		display: grid;
+		gap: 14px;
+		padding: 16px;
+		border: 1px solid rgba(15, 42, 20, 0.14);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.5);
+		-webkit-backdrop-filter: blur(14px);
+		backdrop-filter: blur(14px);
+		font-size: 13px;
+	}
+
+	.field {
+		display: grid;
+		gap: 6px;
+	}
+
+	.field span {
+		display: flex;
+		justify-content: space-between;
+		font-weight: 600;
+	}
+
+	output {
+		font-weight: 400;
+		font-variant-numeric: tabular-nums;
+		opacity: 0.7;
+	}
+
+	select {
+		padding: 6px 8px;
+		border: 1px solid rgba(15, 42, 20, 0.2);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.7);
+		color: inherit;
+		font: inherit;
+	}
+
+	input[type='range'] {
+		width: 100%;
+		accent-color: #0f2a14;
+	}
+</style>
+
+<script>
+	const PRESETS: Record<string, string[]> = {
+		green: ['#6FE07F', '#A6F78C', '#F2F7A0', '#12E6BE', '#B8F4E0', '#F8FDEE', '#86E3A0', '#3EE6D2', '#5CCF78'],
+		lagoon: ['#3CCFCB', '#7EE8E0', '#D8F6F2', '#0BB5D9', '#BDEFF7', '#F3FCFD', '#5BD6D0', '#2A9DF0', '#2BA6B5'],
+		citrus: ['#F0C53A', '#F7E070', '#FFF3A8', '#F29A2E', '#FFE7B8', '#FFFBEE', '#F2CF5A', '#FF8A3D', '#D9A21E'],
+	};
+
+	const aurora = document.getElementById('aurora');
+	const preset = document.getElementById('preset') as HTMLSelectElement | null;
+
+	preset?.addEventListener('change', () => {
+		aurora?.setAttribute('data-palette', JSON.stringify(PRESETS[preset.value]));
+	});
+
+	const sliders: [id: string, attr: string, digits: number][] = [
+		['speed', 'data-speed', 2],
+		['blur', 'data-blur', 2],
+		['grain', 'data-grain', 3],
+	];
+
+	for (const [id, attr, digits] of sliders) {
+		const input = document.getElementById(id) as HTMLInputElement | null;
+		const output = document.getElementById(`${id}-value`);
+		input?.addEventListener('input', () => {
+			aurora?.setAttribute(attr, input.value);
+			if (output) output.textContent = Number(input.value).toFixed(digits);
+		});
+	}
+</script>
