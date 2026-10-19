@@ -1,14 +1,25 @@
 ---
+interface Props {
+	// 'light' for pages whose header sits on a dark photo
+	tone?: 'dark' | 'light';
+}
+
+const { tone = 'dark' } = Astro.props;
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = pathname === '/';
+// Section anchors live on the home page, so prefix them with "/" elsewhere
+const section = (hash: string) => (isHome ? hash : `/${hash}`);
+
 const links = [
 	{ label: 'Home', href: '/' },
-	{ label: 'About', href: '#about' },
-	{ label: 'Service', href: '#service' },
-	{ label: 'Work', href: '#work' },
-	{ label: 'Insights', href: '#insights' },
+	{ label: 'About', href: '/about' },
+	{ label: 'Service', href: section('#service') },
+	{ label: 'Work', href: section('#work') },
+	{ label: 'Insights', href: section('#insights') },
 ];
 ---
 
-<header class="header">
+<header class:list={['header', { 'header--light': tone === 'light' }]}>
 	<a class="brand" href="/" aria-label="VIXERA LABS home">
 		<img class="brand__logo" src="/assets/Logo.png" alt="" width="228" height="196" />
 		<span class="brand__name">VIXERA LABS</span>
@@ -17,8 +28,8 @@ const links = [
 	<div class="actions">
 		<nav class="nav glass" aria-label="Main">
 			{
-				links.map((link, i) => (
-					<a class="nav__link" href={link.href} aria-current={i === 0 ? 'page' : undefined}>
+				links.map((link) => (
+					<a class="nav__link" href={link.href} aria-current={link.href === pathname ? 'page' : undefined}>
 						{link.label}
 					</a>
 				))
@@ -31,11 +42,12 @@ const links = [
 
 <style>
 	.header {
-		position: absolute;
+		position: fixed;
 		top: 40px;
 		left: 50px;
 		right: 50px;
-		z-index: 1;
+		/* Above every section's own stacking (cards, panels use 1-2) */
+		z-index: 100;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -48,8 +60,28 @@ const links = [
 		display: flex;
 		align-items: center;
 		gap: 12px;
+		height: 70px;
+		padding: 0;
+		border-radius: 20px;
 		color: #0f2a14;
 		text-decoration: none;
+		transition:
+			padding 0.3s ease,
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
+
+	.header--light .brand {
+		color: #ffffff;
+	}
+
+	/* Once scrolled, the brand floats over any section, so it gets the same glass as the nav */
+	.header.is-scrolled .brand {
+		padding: 0 20px;
+		background: rgba(255, 255, 255, 0.6);
+		-webkit-backdrop-filter: blur(43px);
+		backdrop-filter: blur(43px);
+		color: #0f2a14;
 	}
 
 	.brand__logo {
@@ -153,6 +185,11 @@ const links = [
 </style>
 
 <script>
+	const header = document.querySelector<HTMLElement>('.header');
+	const updateScrolled = () => header?.classList.toggle('is-scrolled', window.scrollY > 10);
+	updateScrolled();
+	window.addEventListener('scroll', updateScrolled, { passive: true });
+
 	const navLinks = document.querySelectorAll<HTMLAnchorElement>('.nav__link');
 
 	function select(active: HTMLAnchorElement) {

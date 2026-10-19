@@ -9,8 +9,11 @@ const stats = [
 
 <section class="impact" id="impact" aria-labelledby="impact-intro">
 	<p class="intro" id="impact-intro">
-		<strong>Built for companies where execution matters.</strong> We help ambitious teams turn complex operations into
-		reliable AI systems built to perform in the real world.
+		{/* Pages can pass their own intro; wrap the lead-in in <strong> for the dark green emphasis */}
+		<slot>
+			<strong>Built for companies where execution matters.</strong> We help ambitious teams turn complex operations
+			into reliable AI systems built to perform in the real world.
+		</slot>
 	</p>
 
 	<ul class="stats">
