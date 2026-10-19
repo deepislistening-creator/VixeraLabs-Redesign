@@ -1,0 +1,544 @@
+---
+// Placeholder content and colors: swap `color` for real images/video once the assets arrive
+const featured = [
+	{
+		title: 'Foxtail Studio runs on what we built',
+		name: 'Keith, Founder of Foxtail Studio',
+		text: 'Harsh shipped what nobody else could in the timeline we needed. Foxtail Studio runs on what he built.',
+		color: '#3c5a4a',
+	},
+	{
+		title: 'The design changed how people see us',
+		name: 'Founder name, Company',
+		text: 'The design alone changed how people perceive our brand. We look like a company twice our size.',
+		color: '#4a4f63',
+	},
+];
+
+const stories = [
+	{ title: '$4M raised on Shark Tank', quote: 'We needed a product ready for Shark Tank - not a prototype.', color: '#5b6b78' },
+	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#6d6152' },
+	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#4f6b5c' },
+	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#5c5670' },
+	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#6b5a5a' },
+	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#4d6470' },
+];
+
+const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
+---
+
+<section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+	<div class="head">
+		<p class="eyebrow">Testimonial</p>
+		<h2 class="title" id="testimonials-title">In their own words. From founders we built for.</h2>
+		<p class="subtitle">
+			Six founders. One bar: ship the thing their business runs on. Here's what they said after we did.
+		</p>
+	</div>
+
+	<div class="top">
+		<figure class="feature" style={`--fill: ${featured[0].color}`} data-feature>
+			<button class="feature__play" type="button" aria-label="Play testimonial video">
+				<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+					<path d="M7 5.5v9l7.5-4.5L7 5.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+				</svg>
+			</button>
+			<figcaption class="feature__caption">
+				<p class="feature__title" data-feature-title>{featured[0].title}</p>
+				<p class="feature__name" data-feature-name>{featured[0].name}</p>
+			</figcaption>
+		</figure>
+
+		<div class="side">
+			<div class="info" aria-live="polite">
+				<h3 class="info__title" data-info-title>{featured[0].title}</h3>
+				<p class="info__text" data-info-text>{featured[0].text}</p>
+			</div>
+
+			<ul class="picks">
+				{
+					featured.map((item, i) => (
+						<li>
+							<button
+								class:list={['pick', { 'is-active': i === 0 }]}
+								type="button"
+								aria-pressed={i === 0 ? 'true' : 'false'}
+								data-title={item.title}
+								data-name={item.name}
+								data-text={item.text}
+								data-color={item.color}
+							>
+								<span class="pick__thumb" style={`--fill: ${item.color}`} />
+								<span class="pick__text">{item.title}</span>
+							</button>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</div>
+
+	<div class="carousel">
+		<ul class="track" data-track>
+			{
+				stories.map((story) => (
+					<li class="card" style={`--fill: ${story.color}`}>
+						<div class="card__box">
+							<h3 class="card__title">{story.title}</h3>
+							<p class="card__quote">“{story.quote}”</p>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="nav">
+			<button class="nav__btn" type="button" aria-label="Previous testimonials" data-prev>
+				<svg viewBox="0 0 18 16" fill="none" aria-hidden="true" style="transform: scaleX(-1)">
+					<path d={arrow} />
+				</svg>
+			</button>
+			<button class="nav__btn" type="button" aria-label="Next testimonials" data-next>
+				<svg viewBox="0 0 18 16" fill="none" aria-hidden="true">
+					<path d={arrow} />
+				</svg>
+			</button>
+		</div>
+	</div>
+</section>
+
+<style>
+	.testimonials {
+		--pad: max(60px, calc(60 * var(--u)));
+		background: #ffffff;
+		padding: max(100px, calc(100 * var(--u))) var(--pad) 0;
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #111111;
+		overflow: hidden;
+	}
+
+	/* Same label as the FAQ section */
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.title {
+		max-width: 760px;
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		color: #5e5e5e;
+	}
+
+	/* ---------- featured video + side column ---------- */
+
+	.top {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+		gap: max(24px, calc(24 * var(--u)));
+		align-items: start;
+		margin-top: 40px;
+	}
+
+	.feature {
+		position: relative;
+		margin: 0;
+		aspect-ratio: 16 / 9.4;
+		overflow: hidden;
+		border-radius: 12px;
+		background: var(--fill);
+		transition: background-color 0.4s ease;
+	}
+
+	/* Bottom fade so the white quote stays readable over any photo */
+	.feature::after {
+		content: '';
+		position: absolute;
+		inset: 40% 0 0;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+		pointer-events: none;
+	}
+
+	.feature__play {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		z-index: 1;
+		display: grid;
+		place-items: center;
+		border: 0;
+		border-radius: 12px;
+		width: 52px;
+		height: 52px;
+		background: #96f878;
+		color: #0c2b15;
+		cursor: pointer;
+		transform: translate(-50%, -50%);
+		transition: transform 0.25s ease;
+	}
+
+	.feature__play svg {
+		width: 20px;
+		height: 20px;
+	}
+
+	.feature__play:hover {
+		transform: translate(-50%, -50%) scale(1.08);
+	}
+
+	.feature__play:focus-visible {
+		outline: 2px solid #ffffff;
+		outline-offset: 3px;
+	}
+
+	.feature__caption {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		padding: max(24px, calc(28 * var(--u)));
+		color: #ffffff;
+	}
+
+	.feature__title {
+		max-width: 720px;
+		margin: 0;
+		font-size: max(24px, calc(28 * var(--u)));
+		font-weight: 400;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+	}
+
+	.feature__name {
+		margin: 8px 0 0;
+		font-size: 14px;
+		opacity: 0.85;
+	}
+
+	/* Details card for whichever video is featured */
+	.info {
+		padding: max(24px, calc(28 * var(--u))) max(20px, calc(24 * var(--u)));
+		border: 1px solid #ececec;
+		border-radius: 12px;
+		background: #ffffff;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+	}
+
+	.info__title {
+		margin: 0;
+		font-size: max(22px, calc(26 * var(--u)));
+		font-weight: 400;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+	}
+
+	.info__text {
+		margin: 16px 0 0;
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.6;
+		color: #313131;
+	}
+
+	.picks {
+		display: grid;
+		gap: 16px;
+		margin: 24px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.pick {
+		display: flex;
+		align-items: flex-start;
+		gap: 16px;
+		width: 100%;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.pick:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 4px;
+		border-radius: 8px;
+	}
+
+	.pick__thumb {
+		flex: none;
+		width: 48%;
+		aspect-ratio: 16 / 9;
+		border-radius: 10px;
+		background: var(--fill);
+		opacity: 0.6;
+		transition: opacity 0.3s ease;
+	}
+
+	.pick__text {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		font-size: max(17px, calc(20 * var(--u)));
+		line-height: 1.4;
+		color: #8a8a8a;
+		transition: color 0.3s ease;
+	}
+
+	.pick.is-active .pick__thumb,
+	.pick:hover .pick__thumb {
+		opacity: 1;
+	}
+
+	.pick.is-active .pick__text,
+	.pick:hover .pick__text {
+		color: #111111;
+	}
+
+	/* ---------- story carousel ---------- */
+
+	.carousel {
+		margin-top: max(24px, calc(24 * var(--u)));
+		padding-bottom: max(100px, calc(100 * var(--u)));
+	}
+
+	/* Bleeds past the right padding so the next card peeks in from the page edge */
+	.track {
+		--gap: max(20px, calc(20 * var(--u)));
+		display: flex;
+		gap: var(--gap);
+		margin: 0 calc(-1 * var(--pad)) 0 0;
+		padding: 0 var(--pad) 0 0;
+		list-style: none;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+	}
+
+	.track::-webkit-scrollbar {
+		display: none;
+	}
+
+	.card {
+		position: relative;
+		flex: none;
+		width: calc((100% - var(--pad) - 2 * var(--gap)) / 3.15);
+		aspect-ratio: 5 / 6;
+		overflow: hidden;
+		border-radius: 12px;
+		/* Backdrop root, so the glass blur can't pull the white page in at the edges */
+		clip-path: inset(0 round 12px);
+		background: var(--fill);
+		scroll-snap-align: start;
+	}
+
+	/* Glass box: same treatment as the FAQ panel */
+	.card__box {
+		position: absolute;
+		left: 20px;
+		right: 20px;
+		bottom: 20px;
+		padding: 20px;
+		border: 1px solid rgba(255, 255, 255, 0.7);
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.82);
+		-webkit-backdrop-filter: blur(43px) saturate(1.2);
+		backdrop-filter: blur(43px) saturate(1.2);
+	}
+
+	.card__title {
+		margin: 0;
+		font-size: 18px;
+		font-weight: 500;
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+	}
+
+	.card__quote {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		margin: 10px 0 0;
+		font-size: 14px;
+		line-height: 1.5;
+		color: #313131;
+	}
+
+	.nav {
+		display: flex;
+		justify-content: flex-end;
+		gap: 12px;
+		margin-top: 24px;
+	}
+
+	.nav__btn {
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border: 1px solid #e4e4e4;
+		border-radius: 50%;
+		background: #ffffff;
+		color: #111111;
+		cursor: pointer;
+		transition:
+			border-color 0.25s ease,
+			color 0.25s ease,
+			opacity 0.25s ease;
+	}
+
+	.nav__btn svg {
+		width: 16px;
+		stroke: currentColor;
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.nav__btn:hover:not(:disabled) {
+		border-color: #111111;
+	}
+
+	.nav__btn:disabled {
+		color: #b5b5b5;
+		cursor: default;
+	}
+
+	.nav__btn:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 2px;
+	}
+
+	/* ---------- responsive + motion ---------- */
+
+	@media (max-width: 900px) {
+		.testimonials {
+			--pad: 16px;
+			padding-top: 72px;
+		}
+
+		.top {
+			grid-template-columns: 1fr;
+			gap: 32px;
+		}
+
+		.title {
+			font-size: clamp(34px, 9vw, 44px);
+		}
+
+		.feature {
+			aspect-ratio: 4 / 5;
+		}
+
+		.feature__title {
+			font-size: 20px;
+		}
+
+		.pick__thumb {
+			width: 42%;
+		}
+
+		.pick__text {
+			font-size: 16px;
+		}
+
+		.carousel {
+			padding-bottom: 72px;
+		}
+
+		.card {
+			width: 78%;
+		}
+
+		.card__box {
+			left: 12px;
+			right: 12px;
+			bottom: 12px;
+			padding: 16px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.track {
+			scroll-behavior: auto;
+		}
+
+		.feature,
+		.feature__play,
+		.pick__thumb,
+		.pick__text {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.testimonials').forEach((section) => {
+		// Side picks swap the featured testimonial
+		const feature = section.querySelector<HTMLElement>('[data-feature]');
+		const fields = {
+			featureTitle: section.querySelector<HTMLElement>('[data-feature-title]'),
+			featureName: section.querySelector<HTMLElement>('[data-feature-name]'),
+			infoTitle: section.querySelector<HTMLElement>('[data-info-title]'),
+			infoText: section.querySelector<HTMLElement>('[data-info-text]'),
+		};
+		const picks = section.querySelectorAll<HTMLButtonElement>('.pick');
+
+		picks.forEach((pick) => {
+			pick.addEventListener('click', () => {
+				const { title = '', name = '', text = '', color = '' } = pick.dataset;
+				picks.forEach((other) => {
+					other.classList.toggle('is-active', other === pick);
+					other.setAttribute('aria-pressed', String(other === pick));
+				});
+				feature?.style.setProperty('--fill', color);
+				if (fields.featureTitle) fields.featureTitle.textContent = title;
+				if (fields.featureName) fields.featureName.textContent = name;
+				if (fields.infoTitle) fields.infoTitle.textContent = title;
+				if (fields.infoText) fields.infoText.textContent = text;
+			});
+		});
+
+		// Arrows scroll the track one card at a time and disable at either end
+		const track = section.querySelector<HTMLElement>('[data-track]');
+		const prev = section.querySelector<HTMLButtonElement>('[data-prev]');
+		const next = section.querySelector<HTMLButtonElement>('[data-next]');
+		if (!track || !prev || !next) return;
+
+		const step = () => {
+			const card = track.querySelector<HTMLElement>('.card');
+			return card ? card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || '0') : 0;
+		};
+
+		const update = () => {
+			prev.disabled = track.scrollLeft <= 1;
+			next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+		};
+
+		prev.addEventListener('click', () => track.scrollBy({ left: -step() }));
+		next.addEventListener('click', () => track.scrollBy({ left: step() }));
+		track.addEventListener('scroll', update, { passive: true });
+		window.addEventListener('resize', update);
+		update();
+	});
+</script>
