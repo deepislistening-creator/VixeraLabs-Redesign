@@ -1,0 +1,262 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import principle1 from '../assets/principle1.png';
+import principle2 from '../assets/principle2.png';
+import principle3 from '../assets/principle3.png';
+import principle4 from '../assets/principle4.png';
+
+interface Principle {
+	title: string;
+	text: string;
+	image?: ImageMetadata;
+	alt?: string;
+	// CSS object-position: the 4:3 photos are cropped to a portrait card, so this picks what stays in frame
+	focus?: string;
+	// Shown until an image is added, and behind it while it loads
+	placeholder: string;
+}
+
+const principles: Principle[] = [
+	{
+		title: 'Senior engineers only',
+		text: 'Zero juniors. Every project is handled by experienced builders.',
+		image: principle1,
+		alt: 'Product sketches, prototypes and finished hardware laid out on a workbench',
+		focus: '55% center',
+		placeholder: 'linear-gradient(160deg, #e3fddb 0%, #96f878 55%, #3ddc6b 100%)',
+	},
+	{
+		title: 'Ownership, not tasks',
+		text: 'We take full ownership of outcomes, not just task delivery.',
+		image: principle2,
+		alt: 'A man mapping out a workflow with sticky notes on a glass wall',
+		focus: '55% center',
+		placeholder: 'linear-gradient(160deg, #1d5a32 0%, #0c2b15 100%)',
+	},
+	{
+		title: 'Ship fast, stay involved',
+		text: 'We move fast, then stay with you long after launch.',
+		image: principle3,
+		alt: 'Packages moving along an automated conveyor line',
+		focus: '40% center',
+		placeholder: 'linear-gradient(160deg, #0a0a0a 0%, #0c2b15 60%, #3ddc6b 140%)',
+	},
+	{
+		title: 'Honest by default',
+		text: 'Clear communication, realistic timelines, zero sugarcoating.',
+		image: principle4,
+		alt: 'Clear glass panels standing over a printed timeline chart',
+		focus: '50% center',
+		placeholder: 'linear-gradient(160deg, #2f7a45 0%, #0c2b15 100%)',
+	},
+];
+---
+
+<section class="principles" aria-labelledby="principles-title">
+	<div class="head">
+		<p class="eyebrow">How we work</p>
+		<h2 class="title" id="principles-title">Four principles guide everything we build.</h2>
+		<p class="subtitle">
+			They shape how we scope, build and hand over every system.<br />
+			So you always know what you're getting, and who's in control.
+		</p>
+	</div>
+
+	<ul class="cards">
+		{
+			principles.map((item, i) => (
+				<li class="card" style={`--placeholder:${item.placeholder}`}>
+					{item.image && (
+						<Image
+							src={item.image}
+							alt={item.alt ?? ''}
+							widths={[640, 960, 1280, 1600, 2000]}
+							sizes="(max-width: 640px) 170vw, (max-width: 1100px) 90vw, 45vw"
+							format="webp"
+							loading="lazy"
+							class="card__img"
+							style={`object-position:${item.focus ?? 'center'}`}
+						/>
+					)}
+
+					<span class="card__tag">Principle {String(i + 1).padStart(2, '0')}</span>
+
+					<div class="card__box">
+						<h3 class="card__title">{item.title}</h3>
+						<p class="card__text">{item.text}</p>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.principles {
+		--pad: max(60px, calc(60 * var(--u)));
+		background: #f1eeea;
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same treatment as the landing page FAQ ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.title {
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		color: #5e5e5e;
+	}
+
+	/* ---------- cards ---------- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 24px;
+		margin: 40px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		position: relative;
+		aspect-ratio: 422 / 562;
+		overflow: hidden;
+		background: var(--placeholder);
+		/* Backdrop root, so the glass blur can't pull in the page colour at the edges */
+		clip-path: inset(0);
+	}
+
+	/*
+	 * The photos are 4:3 but the cards are portrait, so each image renders ~1.8x the card's width
+	 * (~1.7x on phones, where cards are 4:5). `sizes` above accounts for that so it stays sharp.
+	 */
+	.card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* Darkens the top-left corner so the white tag reads on light photos */
+	.card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+			120% 55% at 0% 0%,
+			rgba(12, 43, 21, 0.8) 0%,
+			rgba(12, 43, 21, 0.4) 45%,
+			rgba(12, 43, 21, 0) 75%
+		);
+		pointer-events: none;
+	}
+
+	.card__tag,
+	.card__box {
+		z-index: 1;
+	}
+
+	.card__tag {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		padding: 6px 14px;
+		border: 1px solid rgba(255, 255, 255, 0.85);
+		border-radius: 8px;
+		background: rgba(12, 43, 21, 0.35);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #ffffff;
+	}
+
+	.card__box {
+		position: absolute;
+		left: 20px;
+		right: 20px;
+		bottom: 20px;
+		padding: 22px 20px;
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.72);
+		-webkit-backdrop-filter: blur(20px);
+		backdrop-filter: blur(20px);
+	}
+
+	.card__title {
+		margin: 0;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: #111111;
+	}
+
+	.card__text {
+		margin: 10px 0 0;
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #313131;
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 1100px) {
+		.cards {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.principles {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(34px, 9vw, 44px);
+		}
+
+		.cards {
+			grid-template-columns: 1fr;
+			gap: 16px;
+			margin-top: 48px;
+		}
+
+		.card {
+			aspect-ratio: 4 / 5;
+		}
+
+		.card__title {
+			font-size: 22px;
+		}
+	}
+</style>
