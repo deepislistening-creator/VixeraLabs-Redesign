@@ -226,6 +226,71 @@ const principles: Principle[] = [
 		color: #313131;
 	}
 
+	/*
+	 * Hover reveal, same motion as the Companies cards: at rest the glass box shows only the title;
+	 * on hover it grows up to fill the card and the description fades in. Touch screens have no
+	 * hover, so they keep the box open with the description showing.
+	 */
+	@media (hover: hover) and (min-width: 641px) {
+		.card__box {
+			/* Fits a two-line title */
+			height: max(116px, calc(116 * var(--u)));
+			overflow: hidden;
+			--ease: cubic-bezier(0.65, 0, 0.35, 1);
+			transition:
+				height 0.35s var(--ease),
+				left 0.35s var(--ease),
+				right 0.35s var(--ease),
+				bottom 0.35s var(--ease),
+				padding 0.35s var(--ease),
+				border-radius 0.35s var(--ease);
+		}
+
+		/* Open: the glass fills the card edge to edge. Padding grows by the 20px inset it loses, so the text doesn't shift sideways */
+		.card:hover .card__box {
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 100%;
+			padding: 42px 40px;
+			border-radius: 0;
+		}
+
+		.card__text {
+			opacity: 0;
+			transform: translateY(8px);
+			transition:
+				opacity 0.2s ease,
+				transform 0.2s ease;
+		}
+
+		.card:hover .card__text {
+			opacity: 1;
+			transform: none;
+			transition:
+				opacity 0.3s ease 0.15s,
+				transform 0.3s ease 0.15s;
+		}
+
+		/* The tag would show blurred through the expanded glass, so it steps out */
+		.card__tag {
+			transition: opacity 0.2s ease 0.2s;
+		}
+
+		.card:hover .card__tag {
+			opacity: 0;
+			transition-delay: 0s;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.card__box,
+		.card__text,
+		.card__tag {
+			transition: none !important;
+		}
+	}
+
 	/* ---------- responsive ---------- */
 
 	@media (max-width: 1100px) {
