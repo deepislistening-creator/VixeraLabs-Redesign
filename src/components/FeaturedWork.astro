@@ -1,0 +1,499 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import eclinical from '../assets/eclinicalNew.png';
+import bank from '../assets/bank.png';
+
+interface Work {
+	title: string;
+	// Shown under the title on the large middle card only
+	text: string;
+	// Without an image the card shows a tinted placeholder
+	image?: ImageMetadata;
+	alt?: string;
+}
+
+// Stand-in photos until the project images are added
+const works: Work[] = [
+	{
+		title: 'US city government — civic technology',
+		text: 'Strategy and technology infrastructure engagement with a major US city government office. Civic tech built for public-sector compliance standards.',
+	},
+	{
+		title: '$3B+ clinical workflow platform',
+		text: 'Built internal tooling and patient-facing infrastructure for one of the largest clinical workflow companies in the US. Millions of patient records. Zero downtime tolerance.',
+		image: eclinical,
+		alt: 'A pharmacy counter with a computer running dispensing software',
+	},
+	{
+		title: "Southeast Asia's largest credit guarantee corporation",
+		text: 'Engineered financial infrastructure for a government-backed institution managing credit guarantees across an entire region. Compliance-first, scale-first.',
+		image: bank,
+		alt: 'Bank sign on the facade of a glass office building',
+	},
+];
+
+// Project shown in the middle (large) slot first
+const START = 1;
+// Slot 0 = left, 1 = middle, 2 = right
+const slotOf = (i: number) => (i - START + 1 + works.length) % works.length;
+const INTERVAL_MS = 2500;
+---
+
+<section class="fwork" aria-labelledby="fwork-title" style={`--interval:${INTERVAL_MS}ms`}>
+	<div class="head">
+		<div>
+			<h2 class="title" id="fwork-title">Featured enterprise work.</h2>
+			<p class="subtitle">Built for organisations where compliance, scale and uptime aren't optional.</p>
+		</div>
+
+		<div class="pips" role="group" aria-label="Choose a project">
+			{
+				works.map((work, i) => (
+					<button
+						class:list={['pip', { 'is-active': i === START }]}
+						type="button"
+						data-index={i}
+						aria-label={`Show ${work.title}`}
+						aria-current={i === START ? 'true' : 'false'}
+					>
+						<span class="pip__fill" />
+					</button>
+				))
+			}
+		</div>
+	</div>
+
+	<ul class="row">
+		{
+			works.map((work, i) => (
+				<li class:list={['item', { 'is-active': i === START }]} data-slot={slotOf(i)}>
+					{/* Clicking a small card brings it to the middle */}
+					<button class="item__hit" type="button" data-index={i} aria-label={`Show ${work.title}`} />
+
+					<div class="item__media">
+						{work.image ? (
+							<Image
+								src={work.image}
+								alt={work.alt ?? ''}
+								widths={[600, 1000, 1400, 1800]}
+								sizes="(max-width: 900px) 100vw, 55vw"
+								format="webp"
+								loading="lazy"
+								class="item__img"
+							/>
+						) : (
+							<div class="item__placeholder" aria-hidden="true" />
+						)}
+					</div>
+
+					<h3 class="item__title">{work.title}</h3>
+					<div class="item__more">
+						<p class="item__text">{work.text}</p>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.fwork {
+		--pad: max(60px, calc(60 * var(--u)));
+		/* Ease-out: moves off quickly and settles softly */
+		--ease: cubic-bezier(0.22, 1, 0.36, 1);
+		--dur: 0.5s;
+		/* Same warm off-white as "AI systems in action." */
+		background: #f1eeea;
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same as "AI systems in action." ---------- */
+
+	.head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 24px;
+	}
+
+	.title {
+		margin: 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		color: #5e5e5e;
+	}
+
+	.pips {
+		display: flex;
+		gap: 6px;
+		flex: none;
+		padding-bottom: 8px;
+	}
+
+	.pip {
+		position: relative;
+		width: 32px;
+		height: 4px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
+		background: rgba(12, 43, 21, 0.15);
+		overflow: hidden;
+		cursor: pointer;
+	}
+
+	/* Bigger click target, same look */
+	.pip::after {
+		content: '';
+		position: absolute;
+		inset: -10px -3px;
+	}
+
+	.pip:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 3px;
+	}
+
+	.pip__fill {
+		position: absolute;
+		inset: 0;
+		background: #0c2b15;
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+
+	/* The active pip's fill is the rotation timer: when it completes, the next project moves in */
+	.pip.is-active .pip__fill {
+		animation: fwork-fill var(--interval) linear forwards;
+	}
+
+	.fwork:has(.row:hover) .pip__fill,
+	.fwork:focus-within .pip__fill {
+		animation-play-state: paused;
+	}
+
+	/* ---------- row ---------- */
+
+	/*
+	 * Three fixed slots: small left, large middle, small right. Projects move through the slots
+	 * (right → middle → left); whichever lands in the middle grows. All images share one horizontal
+	 * centre line (--axis) with captions hanging below. The card leaving the left edge fades out
+	 * and reappears in the right slot.
+	 */
+	.row {
+		--g: 16px;
+		/* Middle slot is 2.2× a side slot */
+		--side: calc((100% - 2 * var(--g)) / 4.2);
+		--center: calc((100% - 2 * var(--g)) * 2.2 / 4.2);
+		--side-h: max(300px, calc(300 * var(--u)));
+		--center-h: max(440px, calc(440 * var(--u)));
+		--axis: calc(var(--center-h) / 2);
+		position: relative;
+		/* Room under the middle image for its title and description */
+		height: calc(var(--center-h) + 170px);
+		margin: 48px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.item {
+		--h: var(--side-h);
+		position: absolute;
+		top: calc(var(--axis) - var(--h) / 2);
+		left: 0;
+		width: var(--side);
+		transition:
+			top var(--dur) var(--ease),
+			left var(--dur) var(--ease),
+			width var(--dur) var(--ease);
+	}
+
+	.item[data-slot='1'] {
+		--h: var(--center-h);
+		left: calc(var(--side) + var(--g));
+		width: var(--center);
+	}
+
+	.item[data-slot='2'] {
+		left: calc(var(--side) + var(--center) + 2 * var(--g));
+	}
+
+	/* Wrapping from one edge to the other: fade out, jump while invisible, fade back in */
+	.item.is-wrapping {
+		animation: fwork-wrap var(--dur) ease;
+		transition:
+			top 0s linear calc(var(--dur) * 0.4),
+			left 0s linear calc(var(--dur) * 0.4),
+			width 0s linear calc(var(--dur) * 0.4);
+	}
+
+	.item__hit {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: pointer;
+	}
+
+	.item.is-active .item__hit {
+		display: none;
+	}
+
+	.item__hit:focus-visible {
+		outline: 2px solid #0c2b15;
+		outline-offset: 4px;
+	}
+
+	/* Sharp corners, no frame: just the photo */
+	.item__media {
+		position: relative;
+		height: var(--h);
+		overflow: hidden;
+		background: #e2ddd6;
+		transition: height var(--dur) var(--ease);
+	}
+
+	.item__img,
+	.item__placeholder {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transform: scale(1);
+		transition: transform 1.2s var(--ease);
+	}
+
+	/* Slow zoom on the large card */
+	.item.is-active .item__img,
+	.item.is-active .item__placeholder {
+		transform: scale(1.08);
+		transition: transform var(--interval) linear;
+	}
+
+	.item__placeholder {
+		background:
+			radial-gradient(120% 90% at 20% 15%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 60%),
+			linear-gradient(160deg, #cfdbe6 0%, #9fb4c6 55%, #6f879b 100%);
+	}
+
+	.item:not(.is-active):hover .item__img,
+	.item:not(.is-active):hover .item__placeholder {
+		transform: scale(1.04);
+	}
+
+	/* Caption: light IBM Plex Sans, larger under the middle image */
+	.item__title {
+		margin: 0;
+		padding: 18px 6px 0;
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.55;
+		letter-spacing: 0.01em;
+		color: #2b2b2b;
+		transition:
+			font-size var(--dur) var(--ease),
+			padding var(--dur) var(--ease),
+			color var(--dur) ease;
+	}
+
+	.item.is-active .item__title {
+		padding-top: 28px;
+		font-size: max(30px, calc(30 * var(--u)));
+		line-height: 1.25;
+		color: #111111;
+	}
+
+	/* Description: collapsed on the small cards, revealed under the middle one */
+	.item__more {
+		display: none;
+	}
+
+	/* Fades in once the card has mostly grown, so it doesn't re-wrap while the width changes */
+	.item.is-active .item__more {
+		display: block;
+		animation: fwork-in 0.35s ease calc(var(--dur) * 0.6) both;
+	}
+
+	.item__text {
+		max-width: 640px;
+		margin: 0;
+		padding: 12px 6px 0;
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.6;
+		color: #5e5e5e;
+	}
+
+	/* ---------- keyframes ---------- */
+
+	@keyframes fwork-wrap {
+		0% {
+			opacity: 1;
+		}
+		35%,
+		50% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes fwork-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes fwork-fill {
+		to {
+			transform: scaleX(1);
+		}
+	}
+
+	/* ---------- responsive + motion ---------- */
+
+	/* Stacked on small screens: no rotation, every card full width */
+	@media (max-width: 900px) {
+		.fwork {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.head {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.title {
+			font-size: clamp(32px, 8.5vw, 44px);
+		}
+
+		.pips {
+			display: none;
+		}
+
+		.row {
+			display: flex;
+			flex-direction: column;
+			gap: 36px;
+			height: auto;
+			margin-top: 32px;
+		}
+
+		.item,
+		.item[data-slot] {
+			position: static;
+			width: auto;
+			animation: none;
+		}
+
+		.item__hit {
+			display: none;
+		}
+
+		.item__media {
+			height: auto;
+			aspect-ratio: 16 / 10;
+		}
+
+		.item__img,
+		.item__placeholder,
+		.item.is-active .item__img,
+		.item.is-active .item__placeholder {
+			transform: none;
+		}
+
+		.item__title,
+		.item.is-active .item__title {
+			padding-top: 14px;
+			font-size: 20px;
+			line-height: 1.35;
+		}
+
+		.item__more {
+			display: block;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.item.is-wrapping,
+		.item.is-active .item__more {
+			animation: none;
+		}
+
+		.item,
+		.item__media,
+		.item__img,
+		.item__placeholder,
+		.item__title,
+		.item__more {
+			transition: none !important;
+		}
+
+		.item.is-active .item__img,
+		.item.is-active .item__placeholder {
+			transform: none;
+		}
+
+		.pip.is-active .pip__fill {
+			animation: none;
+			transform: scaleX(1);
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.fwork').forEach((section) => {
+		const items = [...section.querySelectorAll<HTMLElement>('.item')];
+		const pips = [...section.querySelectorAll<HTMLButtonElement>('.pip')];
+		const count = items.length;
+		let index = items.findIndex((item) => item.classList.contains('is-active'));
+
+		// Put project `next` in the middle slot; the others shift round with it
+		function show(next: number) {
+			if (next === index) return;
+			index = next;
+
+			items.forEach((item, i) => {
+				const slot = (i - index + 1 + count) % count;
+				const prev = Number(item.dataset.slot);
+				// Jumping across the row (left edge ↔ right edge) fades instead of sliding behind the big card
+				item.classList.toggle('is-wrapping', Math.abs(slot - prev) > 1);
+				item.dataset.slot = String(slot);
+				item.classList.toggle('is-active', slot === 1);
+			});
+			pips.forEach((pip, i) => {
+				pip.classList.toggle('is-active', i === index);
+				pip.setAttribute('aria-current', i === index ? 'true' : 'false');
+			});
+		}
+
+		section.querySelectorAll<HTMLButtonElement>('button[data-index]').forEach((button) => {
+			button.addEventListener('click', () => show(Number(button.dataset.index)));
+		});
+
+		section.addEventListener('animationend', (event) => {
+			const target = event.target as HTMLElement;
+			// The active pip's fill finishing is the timer: the right-hand project moves into the middle
+			if (target.classList.contains('pip__fill')) show((index + 1) % count);
+			if (target.classList.contains('is-wrapping')) target.classList.remove('is-wrapping');
+		});
+	});
+</script>

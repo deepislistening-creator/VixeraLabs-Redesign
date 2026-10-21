@@ -1,20 +1,39 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import Impact from '../components/Impact.astro';
+import FeaturedWork from '../components/FeaturedWork.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Footer from '../components/Footer.astro';
+import workHero from '../assets/workNewBg.png';
 ---
 
 <Layout title="Work | VixeraLabs">
-	<Header />
-
 	<section class="work-hero">
-		<p class="eyebrow">Our Work</p>
-		<h1 class="heading">Products founders run their business on.</h1>
-		<p class="subtitle">MVPs, AI agents and full product builds - shipped on a fixed scope and a fixed timeline.</p>
+		<Image
+			src={workHero}
+			alt=""
+			widths={[960, 1440, 2048]}
+			sizes="100vw"
+			format="webp"
+			loading="eager"
+			fetchpriority="high"
+			class="work-hero__img"
+		/>
+		<Header tone="light" />
+
+		<div class="content">
+			<h1 class="heading">Products that solve real problems.<br /><span>Built to scale.</span></h1>
+			<p class="subtitle">
+				We partner with startups and enterprises to design, build, and launch digital products that drive impact.
+			</p>
+		</div>
 	</section>
 
-	<!-- Project content goes here -->
+	<Impact />
+
+	<FeaturedWork />
 
 	<CtaBanner />
 	<Footer />
@@ -22,53 +41,79 @@ import Footer from '../components/Footer.astro';
 
 <style>
 	.work-hero {
-		--pad: max(60px, calc(60 * var(--u)));
-		/* Top padding clears the fixed header (40px offset + 70px tall) */
-		padding: max(200px, calc(200 * var(--u))) var(--pad) max(100px, calc(100 * var(--u)));
-		background: #ffffff;
-		font-family: 'Inter', system-ui, sans-serif;
-		color: #111111;
+		position: relative;
+		height: 600px;
+		overflow: hidden;
+		display: flex;
+		align-items: flex-end;
+		background: #0c2b15;
 	}
 
-	/* Same label as the FAQ and testimonial sections */
-	.eyebrow {
-		margin: 0;
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-		color: #0c2b15;
+	.work-hero__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		/* Keep the people at the table in frame when the sides are cropped */
+		object-position: 60% center;
+	}
+
+	/* Darker wash at the bottom-left, where the heading sits over the bright table and windows */
+	.work-hero::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(0deg, rgba(0, 20, 12, 0.7) 0%, rgba(0, 20, 12, 0) 60%),
+			linear-gradient(90deg, rgba(0, 20, 12, 0.45) 0%, rgba(0, 20, 12, 0) 55%);
+		pointer-events: none;
+	}
+
+	.content {
+		position: relative;
+		z-index: 1;
+		/* Keep this box off the header's area, or it covers the nav and blocks hover/clicks */
+		padding: 0 50px 80px;
 	}
 
 	.heading {
-		max-width: 900px;
-		margin: 16px 0 0;
+		margin: 0;
 		font-family: 'Source Serif 4', Georgia, serif;
-		font-size: max(64px, calc(72 * var(--u)));
+		font-size: max(62px, calc(62 * var(--u)));
 		font-weight: 400;
 		line-height: 1.05;
 		letter-spacing: -0.01em;
+		color: #ffffff;
 		text-wrap: balance;
 	}
 
+	/* Muted second line, same as the Insights hero */
+	.heading span {
+		color: rgba(255, 255, 255, 0.7);
+	}
+
 	.subtitle {
-		max-width: 560px;
-		margin: 20px 0 0;
+		max-width: 620px;
+		margin: 24px 0 0;
+		font-family: 'Inter', system-ui, sans-serif;
 		font-size: 17px;
 		font-weight: 300;
-		line-height: 1.5;
-		color: #5e5e5e;
+		line-height: 1.7;
+		color: rgba(255, 255, 255, 0.7);
 	}
 
 	@media (max-width: 768px) {
 		.work-hero {
-			--pad: 16px;
-			padding-top: 140px;
-			padding-bottom: 72px;
+			height: 560px;
+		}
+
+		.content {
+			padding: 0 16px 56px;
 		}
 
 		.heading {
-			font-size: clamp(40px, 11vw, 64px);
+			font-size: clamp(36px, 9vw, 62px);
 		}
 
 		.subtitle {

@@ -1,4 +1,12 @@
 ---
+import { Image } from 'astro:assets';
+import janitri from '../assets/founders/JanitriFounder.png';
+import mckayn from '../assets/founders/MckaynFounder.png';
+import pulzcad from '../assets/founders/PulzCadFounder.png';
+import dealroom from '../assets/founders/DealroomFounder.png';
+import foxtail from '../assets/founders/FoxtailFounder.png';
+import postbridge from '../assets/founders/PostbridgeFounder.png';
+
 // Placeholder content and colors: swap `color` for real images/video once the assets arrive
 const featured = [
 	{
@@ -6,22 +14,58 @@ const featured = [
 		name: 'Keith, Founder of Foxtail Studio',
 		text: 'Harsh shipped what nobody else could in the timeline we needed. Foxtail Studio runs on what he built.',
 		color: '#3c5a4a',
+		image: foxtail,
+		alt: 'Keith, founder of Foxtail Studio',
 	},
 	{
 		title: 'The design changed how people see us',
-		name: 'Founder name, Company',
+		name: 'Founder of Postbridge',
 		text: 'The design alone changed how people perceive our brand. We look like a company twice our size.',
 		color: '#4a4f63',
+		image: postbridge,
+		alt: 'Founder of Postbridge',
 	},
 ];
 
+// `color` shows behind the photo while it loads
 const stories = [
-	{ title: '$4M raised on Shark Tank', quote: 'We needed a product ready for Shark Tank - not a prototype.', color: '#5b6b78' },
-	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#6d6152' },
-	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#4f6b5c' },
-	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#5c5670' },
-	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#6b5a5a' },
-	{ title: 'Story headline', quote: 'Short quote from the founder goes here - one or two lines.', color: '#4d6470' },
+	{
+		company: 'Janitri',
+		name: 'Founder',
+		title: '$4M raised on Shark Tank',
+		quote: "We needed a product ready for Shark Tank — not a prototype we'd have to explain on stage. Harsh shipped the full build in two weeks. We walked on, the product spoke for itself. $4M raised, $15M valuation. That doesn't happen with a half-built MVP.",
+		color: '#5b6b78',
+		image: janitri,
+		alt: 'Founder of Janitri',
+	},
+	{
+		company: 'Mckayn',
+		name: 'Founder',
+		title: '$4M ARR · 21,000+ customers',
+		quote: "Reddit wasn't a marketing channel anyone took seriously — until Harsh built us the tools that turned it into our highest-converting source. 21,000+ customers later, we use what he shipped every day.",
+		color: '#6d6152',
+		image: mckayn,
+		alt: 'Founder of Mckayn',
+	},
+	{
+		company: 'PulzCAD',
+		name: 'Arvind, Founder',
+		// Non-breaking hyphen keeps "pre-launch" together
+		title: 'Acquired pre‑launch',
+		quote: "Medical devices demand a level of polish most agencies can't deliver. Harsh built our entire diagnostic stack to spec, CDSCO-ready, before we closed the round. The product was acquisition-ready from day one.",
+		color: '#4f6b5c',
+		image: pulzcad,
+		alt: 'Arvind, founder of PulzCAD',
+	},
+	{
+		company: 'Dealroom Media',
+		name: 'Shamus, Founder',
+		title: '$2.3M ARR',
+		quote: "Harsh doesn't build what you ask for. He builds what you actually need. That's the difference between hiring an engineer and finding a partner. Our entire content engine runs on what he shipped.",
+		color: '#5c5670',
+		image: dealroom,
+		alt: 'Shamus, founder of Dealroom Media',
+	},
 ];
 
 const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
@@ -38,6 +82,21 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 
 	<div class="top">
 		<figure class="feature" style={`--fill: ${featured[0].color}`} data-feature>
+			{/* One photo per testimonial, stacked; the picked one fades in */}
+			{
+				featured.map((item, i) => (
+					<Image
+						src={item.image}
+						alt={i === 0 ? item.alt : ''}
+						widths={[800, 1200, 1672]}
+						sizes="(max-width: 900px) 100vw, 64vw"
+						format="webp"
+						loading="lazy"
+						class:list={['feature__img', { 'is-active': i === 0 }]}
+						data-feature-img
+					/>
+				))
+			}
 			<button class="feature__play" type="button" aria-label="Play testimonial video">
 				<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
 					<path d="M7 5.5v9l7.5-4.5L7 5.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
@@ -53,6 +112,7 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 			<div class="info" aria-live="polite">
 				<h3 class="info__title" data-info-title>{featured[0].title}</h3>
 				<p class="info__text" data-info-text>{featured[0].text}</p>
+				<p class="info__name" data-info-name>{featured[0].name}</p>
 			</div>
 
 			<ul class="picks">
@@ -67,8 +127,20 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 								data-name={item.name}
 								data-text={item.text}
 								data-color={item.color}
+								data-index={i}
+								data-alt={item.alt}
 							>
-								<span class="pick__thumb" style={`--fill: ${item.color}`} />
+								<span class="pick__thumb" style={`--fill: ${item.color}`}>
+									<Image
+										src={item.image}
+										alt=""
+										widths={[320, 480, 640]}
+										sizes="(max-width: 900px) 42vw, 15vw"
+										format="webp"
+										loading="lazy"
+										class="pick__img"
+									/>
+								</span>
 								<span class="pick__text">{item.title}</span>
 							</button>
 						</li>
@@ -82,10 +154,26 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		<ul class="track" data-track>
 			{
 				stories.map((story) => (
-					<li class="card" style={`--fill: ${story.color}`}>
+					<li class="card" style={`--fill: ${story.color}`} tabindex="0">
+						<Image
+							src={story.image}
+							alt={story.alt}
+							widths={[480, 720, 960]}
+							sizes="(max-width: 900px) 78vw, 24vw"
+							format="webp"
+							loading="lazy"
+							class="card__img"
+						/>
+						{/* Glass box: title at rest; grows to fill the card with the full quote on hover */}
 						<div class="card__box">
+							<p class="card__meta">
+								<strong>{story.company}</strong>
+								{story.name}
+							</p>
 							<h3 class="card__title">{story.title}</h3>
-							<p class="card__quote">“{story.quote}”</p>
+							<div class="card__more">
+								<p class="card__quote">“{story.quote}”</p>
+							</div>
 						</div>
 					</li>
 				))
@@ -154,14 +242,34 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		margin-top: 40px;
 	}
 
+	/* Side column runs the full height of the video: the info card takes the spare room, picks line up with the bottom edge */
+	.side {
+		align-self: stretch;
+		display: flex;
+		flex-direction: column;
+	}
+
 	.feature {
 		position: relative;
 		margin: 0;
 		aspect-ratio: 16 / 9.4;
 		overflow: hidden;
-		border-radius: 12px;
 		background: var(--fill);
 		transition: background-color 0.4s ease;
+	}
+
+	.feature__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+
+	.feature__img.is-active {
+		opacity: 1;
 	}
 
 	/* Bottom fade so the white quote stays readable over any photo */
@@ -232,9 +340,11 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 
 	/* Details card for whichever video is featured */
 	.info {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 		padding: max(24px, calc(28 * var(--u))) max(20px, calc(24 * var(--u)));
 		border: 1px solid #ececec;
-		border-radius: 12px;
 		background: #ffffff;
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 	}
@@ -248,11 +358,22 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 	}
 
 	.info__text {
-		margin: 16px 0 0;
+		/* Bottom margin keeps a minimum gap above the name when the card is at its shortest */
+		margin: 16px 0 24px;
 		font-size: 15px;
 		font-weight: 300;
 		line-height: 1.6;
 		color: #313131;
+	}
+
+	/* Sits at the foot of the card, whatever height it stretches to */
+	.info__name {
+		margin: auto 0 0;
+		padding-top: 20px;
+		border-top: 1px solid #ececec;
+		font-size: 14px;
+		font-weight: 500;
+		color: #5e5e5e;
 	}
 
 	.picks {
@@ -286,10 +407,17 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		flex: none;
 		width: 48%;
 		aspect-ratio: 16 / 9;
-		border-radius: 10px;
+		overflow: hidden;
 		background: var(--fill);
 		opacity: 0.6;
 		transition: opacity 0.3s ease;
+	}
+
+	.pick__img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
 	.pick__text {
@@ -338,50 +466,157 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		display: none;
 	}
 
+	/* Four tall portrait cards with sharp corners, filling the row */
 	.card {
+		--inset: 20px;
+		--ease: cubic-bezier(0.65, 0, 0.35, 1);
 		position: relative;
 		flex: none;
-		width: calc((100% - var(--pad) - 2 * var(--gap)) / 3.15);
-		aspect-ratio: 5 / 6;
+		/* % is the track's content box, which already excludes the bleed padding */
+		width: calc((100% - 3 * var(--gap)) / 4);
+		aspect-ratio: 3 / 4;
 		overflow: hidden;
-		border-radius: 12px;
 		/* Backdrop root, so the glass blur can't pull the white page in at the edges */
-		clip-path: inset(0 round 12px);
+		clip-path: inset(0);
 		background: var(--fill);
 		scroll-snap-align: start;
+		outline: none;
 	}
 
-	/* Glass box: same treatment as the FAQ panel */
+	.card:focus-visible {
+		box-shadow: inset 0 0 0 2px #0c2b15;
+	}
+
+	/* Portraits are anchored near the top so the face stays clear of the box */
+	.card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 20%;
+	}
+
+	/*
+	 * Glass box, anchored to the bottom. At rest it fits its content (meta + title); on hover its
+	 * min-height grows to the full card, so it rises over the photo and the quote fades in.
+	 */
 	.card__box {
 		position: absolute;
-		left: 20px;
-		right: 20px;
-		bottom: 20px;
+		left: var(--inset);
+		right: var(--inset);
+		bottom: var(--inset);
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 		padding: 20px;
-		border: 1px solid rgba(255, 255, 255, 0.7);
-		border-radius: 12px;
-		background: rgba(255, 255, 255, 0.82);
-		-webkit-backdrop-filter: blur(43px) saturate(1.2);
-		backdrop-filter: blur(43px) saturate(1.2);
+		/* Same glass as the Principles cards: no border */
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.72);
+		-webkit-backdrop-filter: blur(20px);
+		backdrop-filter: blur(20px);
+		/* Same motion and speed as the Principles cards on the About page */
+		transition:
+			min-height 0.35s var(--ease),
+			left 0.35s var(--ease),
+			right 0.35s var(--ease),
+			bottom 0.35s var(--ease),
+			padding 0.35s var(--ease),
+			border-radius 0.35s var(--ease);
+	}
+
+	/* Always one line (trimmed with … if tight), so it can't make one box taller than the others */
+	.card__meta {
+		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: 12px;
+		font-weight: 400;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #2b2b2b;
+	}
+
+	.card__meta strong {
+		margin-right: 8px;
+		font-weight: 600;
+		color: #111111;
 	}
 
 	.card__title {
-		margin: 0;
-		font-size: 18px;
-		font-weight: 500;
+		margin: 10px 0 0;
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
 		line-height: 1.3;
-		letter-spacing: -0.01em;
+		letter-spacing: 0.01em;
+		color: #111111;
+		/* Room for two lines on every card, so all four boxes rest at the same height */
+		min-height: calc(2 * 1.3em);
+	}
+
+	/* Quote: collapsed at rest, revealed as the box grows */
+	.card__more {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transition:
+			grid-template-rows 0.35s var(--ease),
+			opacity 0.2s ease;
 	}
 
 	.card__quote {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
+		min-height: 0;
 		overflow: hidden;
-		margin: 10px 0 0;
-		font-size: 14px;
+		margin: 0;
+		padding-top: 16px;
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: 16px;
+		font-weight: 400;
 		line-height: 1.5;
-		color: #313131;
+		color: #2b2b2b;
+	}
+
+	@media (hover: hover) {
+		/* Open: the glass fills the card edge to edge. Padding grows by the inset it loses, so the text doesn't shift sideways */
+		.card:hover .card__box,
+		.card:focus-visible .card__box {
+			left: 0;
+			right: 0;
+			bottom: 0;
+			min-height: 100%;
+			padding: calc(20px + var(--inset));
+			border-radius: 0;
+		}
+
+		/* The two-line reserve only matters at rest; open, the quote sits right under a one-line title */
+		.card:hover .card__title,
+		.card:focus-visible .card__title {
+			min-height: 0;
+		}
+
+		.card:hover .card__more,
+		.card:focus-visible .card__more {
+			grid-template-rows: 1fr;
+			opacity: 1;
+			transition:
+				grid-template-rows 0.35s var(--ease),
+				opacity 0.3s ease 0.15s;
+		}
+	}
+
+	/* Touch screens have no hover, so the quote is always shown */
+	@media (hover: none) {
+		.card__title {
+			min-height: 0;
+		}
+
+		.card__more {
+			grid-template-rows: 1fr;
+			opacity: 1;
+		}
 	}
 
 	.nav {
@@ -389,6 +624,10 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		justify-content: flex-end;
 		gap: 12px;
 		margin-top: 24px;
+	}
+
+	.nav[hidden] {
+		display: none;
 	}
 
 	.nav__btn {
@@ -467,14 +706,20 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		}
 
 		.card {
+			--inset: 12px;
 			width: 78%;
 		}
 
 		.card__box {
-			left: 12px;
-			right: 12px;
-			bottom: 12px;
 			padding: 16px;
+		}
+
+		.card__title {
+			font-size: 22px;
+		}
+
+		.card__quote {
+			font-size: 14px;
 		}
 	}
 
@@ -484,10 +729,13 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		}
 
 		.feature,
+		.feature__img,
 		.feature__play,
 		.pick__thumb,
-		.pick__text {
-			transition: none;
+		.pick__text,
+		.card__box,
+		.card__more {
+			transition: none !important;
 		}
 	}
 </style>
@@ -501,12 +749,20 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 			featureName: section.querySelector<HTMLElement>('[data-feature-name]'),
 			infoTitle: section.querySelector<HTMLElement>('[data-info-title]'),
 			infoText: section.querySelector<HTMLElement>('[data-info-text]'),
+			infoName: section.querySelector<HTMLElement>('[data-info-name]'),
 		};
 		const picks = section.querySelectorAll<HTMLButtonElement>('.pick');
+		const images = section.querySelectorAll<HTMLImageElement>('[data-feature-img]');
 
 		picks.forEach((pick) => {
 			pick.addEventListener('click', () => {
-				const { title = '', name = '', text = '', color = '' } = pick.dataset;
+				const { title = '', name = '', text = '', color = '', alt = '' } = pick.dataset;
+				const index = Number(pick.dataset.index);
+				// Only the visible photo carries alt text
+				images.forEach((img, i) => {
+					img.classList.toggle('is-active', i === index);
+					img.alt = i === index ? alt : '';
+				});
 				picks.forEach((other) => {
 					other.classList.toggle('is-active', other === pick);
 					other.setAttribute('aria-pressed', String(other === pick));
@@ -516,6 +772,7 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 				if (fields.featureName) fields.featureName.textContent = name;
 				if (fields.infoTitle) fields.infoTitle.textContent = title;
 				if (fields.infoText) fields.infoText.textContent = text;
+				if (fields.infoName) fields.infoName.textContent = name;
 			});
 		});
 
@@ -530,9 +787,13 @@ const arrow = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 			return card ? card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || '0') : 0;
 		};
 
+		const nav = prev.parentElement;
+
 		const update = () => {
 			prev.disabled = track.scrollLeft <= 1;
 			next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 1;
+			// All four cards fit on desktop, so the arrows only show when there's something to scroll to
+			if (nav) nav.hidden = prev.disabled && next.disabled;
 		};
 
 		prev.addEventListener('click', () => track.scrollBy({ left: -step() }));
