@@ -1,0 +1,257 @@
+---
+interface Project {
+	category: string;
+	title?: string;
+	text: string;
+	rating?: string;
+	featured?: boolean;
+}
+
+// Images are still to come; each card shows a blank media area until then
+const projects: Project[] = [
+	{
+		category: 'Mobile game development',
+		title: 'My Puppy Daycare Salon',
+		text: 'A playful care experience reaching 10M+ downloads.',
+		rating: '4.1',
+		featured: true,
+	},
+	{
+		category: 'AI operations platform',
+		text: 'From manual work to intelligent automation.',
+	},
+	{
+		category: 'Digital product experience',
+		text: 'Modern web experiences for high-growth teams.',
+	},
+];
+---
+
+<section class="work" aria-labelledby="work-title">
+	<div class="head">
+		<p class="eyebrow">Selected work</p>
+		<h2 class="title" id="work-title">Where expert development meets next-generation AI.</h2>
+		<p class="subtitle">
+			From consumer apps reaching millions to AI systems transforming how teams work,<br />
+			we build products designed for real-world adoption.
+		</p>
+	</div>
+
+	<ul class="cards">
+		{
+			projects.map((item) => (
+				<li class:list={['card', { 'card--featured': item.featured }]}>
+					<div class="card__media" aria-hidden="true" />
+
+					<div class="card__body">
+						<p class="card__category">{item.category}</p>
+						{item.title && <h3 class="card__title">{item.title}</h3>}
+						<p class="card__text">{item.text}</p>
+						{item.rating && (
+							<span class="card__rating">
+								{item.rating}
+								<span aria-hidden="true">★</span> Rating
+							</span>
+						)}
+					</div>
+				</li>
+			))
+		}
+	</ul>
+
+	<a class="more" href="/work">
+		Explore all work
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+			<path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+		</svg>
+	</a>
+</section>
+
+<style>
+	.work {
+		--pad: max(60px, calc(60 * var(--u)));
+		background: #f1eeea;
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same treatment as the Principles section ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.title {
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		color: #5e5e5e;
+	}
+
+	/* ---------- cards: one tall featured card on the left, two stacked on the right ---------- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: 1.35fr 1fr;
+		grid-template-rows: 1fr 1fr;
+		gap: 16px;
+		margin: 40px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		border: 1px solid rgba(12, 43, 21, 0.08);
+		border-radius: 12px;
+		background: #ffffff;
+	}
+
+	.card--featured {
+		grid-row: span 2;
+	}
+
+	/* Blank until the project images are added */
+	.card__media {
+		flex: 1;
+		min-height: 220px;
+		background: #e6e2dd;
+	}
+
+	.card--featured .card__media {
+		min-height: 420px;
+	}
+
+	.card__body {
+		padding: 20px;
+	}
+
+	.card--featured .card__body {
+		padding: 24px 20px;
+	}
+
+	.card__category {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.card__title {
+		margin: 14px 0 0;
+		font-size: max(28px, calc(28 * var(--u)));
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: 0.01em;
+		text-transform: uppercase;
+		color: #111111;
+	}
+
+	.card__text {
+		margin: 10px 0 0;
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #313131;
+	}
+
+	.card--featured .card__text {
+		margin-top: 14px;
+		color: #5e5e5e;
+	}
+
+	.card__rating {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: 18px;
+		padding: 8px 16px;
+		border-radius: 8px;
+		background: #e3fddb;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.more {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 32px;
+		padding-bottom: 2px;
+		border-bottom: 1px solid currentColor;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		text-decoration: none;
+		color: #0c2b15;
+	}
+
+	.more svg {
+		transition: transform 0.2s ease;
+	}
+
+	.more:hover svg {
+		transform: translateX(3px);
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 900px) {
+		.cards {
+			grid-template-columns: 1fr;
+			grid-template-rows: none;
+		}
+
+		.card--featured {
+			grid-row: auto;
+		}
+
+		.card--featured .card__media {
+			min-height: 320px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.work {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(34px, 9vw, 44px);
+		}
+
+		.subtitle br {
+			display: none;
+		}
+
+		.card__title {
+			font-size: 24px;
+		}
+	}
+</style>

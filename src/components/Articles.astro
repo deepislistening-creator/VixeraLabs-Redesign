@@ -1,0 +1,337 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import ArrowButton from './ArrowButton.astro';
+
+interface Article {
+	// Article pages don't exist yet; cards link here once they do
+	href?: string;
+	category: string;
+	title: string;
+	excerpt: string;
+	readTime: string;
+	image?: ImageMetadata;
+	alt?: string;
+	// Shown until an image is added, and behind it while it loads
+	placeholder: string;
+}
+
+const articles: Article[] = [
+	{
+		category: 'Startups',
+		title: 'Custom Software Development for Startups',
+		excerpt:
+			"Custom software can set your startup apart or drain your runway before you find customers. The difference is rarely the code; it's the decisions around it.",
+		readTime: '5 min read',
+		placeholder: 'linear-gradient(160deg, #e3fddb 0%, #96f878 55%, #3ddc6b 100%)',
+	},
+	{
+		category: 'App development',
+		title: 'How Much Does App Development Cost in 2026?',
+		excerpt:
+			'Real budget ranges: a simple app runs $15,000–$50,000, a mid-complexity app $50,000–$150,000, and a complex app $150,000–$400,000+.',
+		readTime: '5 min read',
+		placeholder: 'linear-gradient(160deg, #1d5a32 0%, #0c2b15 100%)',
+	},
+	{
+		category: 'MVP development',
+		title: 'What Is an MVP in Software Development?',
+		excerpt:
+			"The simplest version of a product that still delivers real value to users. Here's what that means in practice, and how the build actually works.",
+		readTime: '4 min read',
+		placeholder: 'linear-gradient(160deg, #0a0a0a 0%, #0c2b15 60%, #3ddc6b 140%)',
+	},
+	{
+		category: 'SaaS development',
+		title: 'SaaS Development Cost & Process',
+		excerpt:
+			'Planning a SaaS product? A straight answer to what it costs and how the development process works, with real budget ranges by stage.',
+		readTime: '5 min read',
+		placeholder: 'linear-gradient(160deg, #2f7a45 0%, #0c2b15 100%)',
+	},
+	{
+		category: 'AI automation',
+		title: '10 Real AI Automation Examples That Cut Costs',
+		excerpt:
+			'Agents doing real work inside real businesses, organised by the team they help, plus how orchestration ties them into end-to-end workflows.',
+		readTime: '6 min read',
+		placeholder: 'linear-gradient(160deg, #96f878 0%, #2f7a45 50%, #0c2b15 100%)',
+	},
+];
+---
+
+<section class="articles" aria-labelledby="articles-title">
+	<div class="head">
+		<p class="eyebrow">Latest articles</p>
+		<h2 class="title" id="articles-title">Practical reads for every stage of the build.</h2>
+		<p class="subtitle">
+			Costs, timelines and the decisions behind them.<br />
+			Written from the products we've shipped, not from theory.
+		</p>
+	</div>
+
+	<ul class="cards">
+		{
+			articles.map((item) => (
+				<li class="card">
+					<div class="card__media" style={`--placeholder:${item.placeholder}`}>
+						{item.image && (
+							<Image
+								src={item.image}
+								alt={item.alt ?? ''}
+								widths={[480, 720, 960]}
+								sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
+								format="webp"
+								loading="lazy"
+								class="card__img"
+							/>
+						)}
+					</div>
+
+					<div class="card__box">
+						<p class="card__category">{item.category}</p>
+						<p class="card__meta">{item.readTime}</p>
+						<h3 class="card__title">{item.title}</h3>
+
+						<div class="card__more">
+							<p class="card__excerpt">{item.excerpt}</p>
+							<ArrowButton href={item.href ?? '#'} label="Read Post" class="card__btn" />
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.articles {
+		--pad: max(60px, calc(60 * var(--u)));
+		background: #ffffff;
+		padding: 0 var(--pad) max(100px, calc(100 * var(--u)));
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same treatment as the Principles section ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.title {
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		color: #5e5e5e;
+	}
+
+	/* ---------- cards: image on top, then label, meta, title ---------- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: max(48px, calc(48 * var(--u))) 24px;
+		margin: 40px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.card__media {
+		position: relative;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		background: var(--placeholder);
+	}
+
+	/* Soft tint so the text panel reads as part of the card against the white section */
+	.card__box {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 24px;
+		background: #f5f4f0;
+	}
+
+	.card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+	}
+
+	.card:hover .card__img {
+		transform: scale(1.04);
+	}
+
+	.card__category {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #1d7a3a;
+	}
+
+	.card__meta {
+		margin: 8px 0 0;
+		font-size: 14px;
+		font-weight: 400;
+		color: #5e5e5e;
+	}
+
+	.card__title {
+		margin: 10px 0 0;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: #111111;
+	}
+
+	.card__excerpt {
+		margin: 10px 0 0;
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.5;
+		color: #5e5e5e;
+	}
+
+	/* Takes the leftover height so the button can sit at the bottom of the card */
+	.card__more {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	/* :global because the class lands on the ArrowButton's own <a> */
+	.card__more :global(.card__btn) {
+		align-self: flex-start;
+		margin-top: auto;
+	}
+
+	/*
+	 * Hover reveal, same motion as the Principles cards: at rest the card reads as image on top,
+	 * text below; on hover the content box grows up to fill the card and the excerpt and button
+	 * fade in. Touch screens have no hover, so they keep the stacked layout with everything showing.
+	 */
+	@media (hover: hover) and (min-width: 641px) {
+		.card {
+			/* Image area (4:3 of the width) plus the resting text box */
+			aspect-ratio: 5 / 6;
+		}
+
+		.card__media {
+			position: absolute;
+			inset: 0;
+			aspect-ratio: auto;
+		}
+
+		.card__box {
+			--ease: cubic-bezier(0.65, 0, 0.35, 1);
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			/* Fits category, read time and a title of up to three lines (narrow 3-column widths) */
+			height: max(210px, calc(210 * var(--u)));
+			overflow: hidden;
+			-webkit-backdrop-filter: blur(20px);
+			backdrop-filter: blur(20px);
+			transition:
+				height 0.35s var(--ease),
+				padding 0.35s var(--ease),
+				background-color 0.35s var(--ease);
+		}
+
+		/* Open: the box fills the card, turning to glass so the image shows faintly behind. Only the top padding grows, so the text doesn't shift sideways */
+		.card:hover .card__box,
+		.card:focus-within .card__box {
+			height: 100%;
+			padding-top: 36px;
+			background: rgba(245, 244, 240, 0.85);
+		}
+
+		.card__more {
+			opacity: 0;
+			transform: translateY(8px);
+			transition:
+				opacity 0.2s ease,
+				transform 0.2s ease;
+		}
+
+		.card:hover .card__more,
+		.card:focus-within .card__more {
+			opacity: 1;
+			transform: none;
+			transition:
+				opacity 0.3s ease 0.15s,
+				transform 0.3s ease 0.15s;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.card__img,
+		.card__box,
+		.card__more {
+			transition: none !important;
+		}
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 1100px) {
+		.cards {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.articles {
+			--pad: 16px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(34px, 9vw, 44px);
+		}
+
+		.subtitle br {
+			display: none;
+		}
+
+		.cards {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.card__title {
+			font-size: 22px;
+		}
+	}
+</style>

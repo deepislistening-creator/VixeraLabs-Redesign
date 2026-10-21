@@ -1,4 +1,11 @@
 ---
+interface Props {
+	// false renders just the intro, e.g. as a page lead-in
+	showStats?: boolean;
+}
+
+const { showStats = true } = Astro.props;
+
 const stats = [
 	{ prefix: '$', value: 40, suffix: 'M+', label: 'Capital raised by our clients' },
 	{ prefix: '$', value: 182, suffix: 'M+', label: 'Combined client valuation' },
@@ -7,7 +14,7 @@ const stats = [
 ];
 ---
 
-<section class="impact" id="impact" aria-labelledby="impact-intro">
+<section class:list={['impact', { 'impact--intro-only': !showStats }]} id="impact" aria-labelledby="impact-intro">
 	<p class="intro" id="impact-intro">
 		{/* Pages can pass their own intro; wrap the lead-in in <strong> for the dark green emphasis */}
 		<slot>
@@ -16,6 +23,7 @@ const stats = [
 		</slot>
 	</p>
 
+	{showStats && (
 	<ul class="stats">
 		{
 			stats.map((stat) => (
@@ -37,12 +45,18 @@ const stats = [
 			))
 		}
 	</ul>
+	)}
 </section>
 
 <style>
 	.impact {
 		background: #ffffff;
 		padding: max(115px, calc(115 * var(--u))) max(60px, calc(60 * var(--u))) max(150px, calc(150 * var(--u)));
+	}
+
+	/* Without the stats, the bottom space matches the top */
+	.impact--intro-only {
+		padding-bottom: max(115px, calc(115 * var(--u)));
 	}
 
 	.intro {
@@ -126,6 +140,10 @@ const stats = [
 	@media (max-width: 640px) {
 		.impact {
 			padding: 72px 16px 88px;
+		}
+
+		.impact--intro-only {
+			padding-bottom: 72px;
 		}
 
 		.intro {

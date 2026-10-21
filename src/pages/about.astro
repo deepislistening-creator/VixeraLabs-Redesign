@@ -3,7 +3,9 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Impact from '../components/Impact.astro';
+import SelectedWork from '../components/SelectedWork.astro';
 import Principles from '../components/Principles.astro';
+import Faq from '../components/Faq.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Footer from '../components/Footer.astro';
 import aboutHero from '../assets/About.png';
@@ -34,7 +36,11 @@ import aboutHero from '../assets/About.png';
 		stay with you.
 	</Impact>
 
+	<SelectedWork />
+
 	<Principles />
+
+	<Faq />
 
 	<CtaBanner />
 	<Footer />
