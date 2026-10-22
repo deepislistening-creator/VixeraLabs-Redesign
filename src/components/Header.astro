@@ -29,7 +29,12 @@ const links = [
 		<nav class="nav glass" aria-label="Main">
 			{
 				links.map((link) => (
-					<a class="nav__link" href={link.href} aria-current={link.href === pathname ? 'page' : undefined}>
+					<a class="nav__link" href={link.href} aria-current={
+							// Sub-pages (e.g. /insights/<post>) keep their section highlighted
+							link.href === pathname || (link.href !== '/' && pathname.startsWith(`${link.href}/`))
+								? 'page'
+								: undefined
+						}>
 						{link.label}
 					</a>
 				))

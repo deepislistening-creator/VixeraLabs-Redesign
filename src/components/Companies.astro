@@ -25,6 +25,8 @@ interface Props {
 	title?: string;
 	subtitle?: string;
 	items?: Company[];
+	// Section background; defaults to the warm off-white
+	background?: string;
 }
 
 // Remaining cards get their images and info content later
@@ -58,13 +60,19 @@ const {
 	title = 'AI systems in action.',
 	subtitle = 'Real systems. Measurable impact. Built inside businesses where speed, accuracy, and control matter.',
 	items: companies = defaultCompanies,
+	background,
 } = Astro.props;
 
 const titleId = `${id}-title`;
 const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 ---
 
-<section class="companies" id={id} aria-labelledby={titleId}>
+<section
+	class="companies"
+	id={id}
+	aria-labelledby={titleId}
+	style={background ? `background:${background}` : undefined}
+>
 	<div class="head">
 		<div>
 			<h2 class="title" id={titleId}>{title}</h2>
