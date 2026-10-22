@@ -1,0 +1,425 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import ArrowButton from './ArrowButton.astro';
+import janitriFounder from '../assets/founders/JanitriFounder.png';
+import pulzcadFounder from '../assets/founders/PulzCadFounder.png';
+import mckaynFounder from '../assets/founders/MckaynFounder.png';
+import dealroomFounder from '../assets/founders/DealroomFounder.png';
+
+interface Project {
+	name: string;
+	sector: string;
+	// Headline result, shown as a chip under the sector
+	highlight: string;
+	text: string;
+	quote: string;
+	founder: string;
+	avatar?: ImageMetadata;
+	// Without an href the card has no button (e.g. the product is no longer live)
+	href?: string;
+	image?: ImageMetadata;
+	alt?: string;
+	// Shown until a screenshot is added, and behind it while it loads
+	placeholder: string;
+}
+
+// Live product links and screenshots still to be added
+const projects: Project[] = [
+	{
+		name: 'Janitri',
+		sector: 'Healthcare · AI · India',
+		highlight: '$4M raised · Shark Tank India',
+		text: 'AI-powered maternal healthcare platform reducing infant mortality across rural India.',
+		quote:
+			'We needed someone who could build fast without cutting corners. Harsh shipped our entire platform in 3 weeks — and it helped us raise our next round.',
+		founder: 'Founder, Janitri',
+		avatar: janitriFounder,
+		href: '#',
+		placeholder: 'linear-gradient(160deg, #efe4ff 0%, #f9d9e4 55%, #f3b8c8 100%)',
+	},
+	{
+		name: 'PulzCAD',
+		sector: 'Healthcare · MedTech',
+		highlight: '$50M+ valuation',
+		text: 'Wearable 2-lead ECG with AI analytics that helps cardiologists detect coronary artery disease.',
+		quote:
+			'They understood the clinical side of cardiac diagnostics from day one — what they built was acquisition-ready.',
+		founder: 'Founder, PulzCAD',
+		avatar: pulzcadFounder,
+		href: '#',
+		placeholder: 'linear-gradient(160deg, #0f3b3a 0%, #0a2827 55%, #3fd6c6 160%)',
+	},
+	{
+		name: 'Mckayn',
+		sector: 'eCommerce · Growth',
+		highlight: '$4M ARR',
+		text: 'Performance marketing agency driving revenue growth for established eCommerce brands.',
+		quote: 'They turned our performance data into a platform our clients could actually trust — and shipped it fast.',
+		founder: 'Founder, Mckayn',
+		avatar: mckaynFounder,
+		href: '#',
+		placeholder: 'linear-gradient(160deg, #ffffff 0%, #e6f7df 55%, #7fd46a 140%)',
+	},
+	{
+		name: 'Dealroom Media',
+		sector: 'B2B · Content',
+		highlight: '$2.3M ARR',
+		text: 'Done-for-you LinkedIn ghostwriting that turns B2B founders into investor and customer pipeline.',
+		quote: 'They understood how B2B content actually converts and built exactly the engine we needed.',
+		founder: 'Founder, Dealroom Media',
+		avatar: dealroomFounder,
+		href: '#',
+		placeholder: 'linear-gradient(160deg, #000000 0%, #0a1a3a 55%, #2f7bff 150%)',
+	},
+	{
+		name: "Horse's Mouth",
+		sector: 'EdTech · Mentorship',
+		highlight: 'Acquired',
+		text: 'Career mentorship connecting students with professionals.',
+		quote: 'Most agencies disappear after launch. Harsh stayed until we were stable.',
+		founder: "Founder, Horse's Mouth",
+		placeholder: 'linear-gradient(160deg, #5b3d9e 0%, #6f4bbf 55%, #8c7ad6 100%)',
+	},
+	{
+		name: 'Ashva',
+		sector: 'Healthcare · Wearables',
+		highlight: 'Acquired',
+		text: 'AI-enabled wearable devices for objective physiotherapy and musculoskeletal assessment.',
+		quote: "They built for a clinical niche they'd never touched — and got the physiotherapy workflows exactly right.",
+		founder: 'Founder, Ashva',
+		href: '#',
+		placeholder: 'linear-gradient(160deg, #0a0a0a 0%, #2a1a08 60%, #f08a12 150%)',
+	},
+];
+---
+
+<section class="startups" aria-labelledby="startups-title">
+	<div class="head">
+		<p class="eyebrow">For startups</p>
+		<h2 class="title" id="startups-title">What we build for startups.</h2>
+		<p class="subtitle">
+			From first commit to first revenue.<br />
+			MVPs, full products, and everything between, built from scratch for founders who needed to ship fast.
+		</p>
+	</div>
+
+	<ul class="cards">
+		{
+			projects.map((item) => (
+				<li class="card">
+					<div class="card__media" style={`--placeholder:${item.placeholder}`}>
+						{item.image && (
+							<Image
+								src={item.image}
+								alt={item.alt ?? ''}
+								widths={[480, 720, 960]}
+								sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
+								format="webp"
+								loading="lazy"
+								class="card__img"
+							/>
+						)}
+					</div>
+
+					<div class="card__box">
+						<p class="card__category">{item.sector}</p>
+						<p class="card__meta">{item.highlight}</p>
+						<h3 class="card__title">{item.name}</h3>
+
+						<div class="card__more">
+							<p class="card__excerpt">{item.text}</p>
+
+							<figure class="card__quote">
+								<blockquote>“{item.quote}”</blockquote>
+								<figcaption>
+									{item.avatar && (
+										<Image
+											src={item.avatar}
+											alt=""
+											widths={[56, 112]}
+											sizes="28px"
+											format="webp"
+											loading="lazy"
+											class="card__avatar"
+										/>
+									)}
+									{item.founder}
+								</figcaption>
+							</figure>
+
+							{item.href && <ArrowButton href={item.href} label="View live product" class="card__btn" />}
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.startups {
+		--pad: max(60px, calc(60 * var(--u)));
+		/* Same warm off-white as "Featured enterprise work." */
+		background: #f1eeea;
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same treatment as the Insights articles ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	.title {
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+	}
+
+	.subtitle {
+		margin: 12px 0 0;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		color: #5e5e5e;
+	}
+
+	/* ---------- cards: same as the Insights article cards ---------- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: max(48px, calc(48 * var(--u))) 24px;
+		margin: 40px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.card__media {
+		position: relative;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+		background: var(--placeholder);
+	}
+
+	/* White rather than the Insights tint, so the text panel stands off the warm section */
+	.card__box {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 24px;
+		background: #ffffff;
+	}
+
+	.card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+	}
+
+	.card:hover .card__img {
+		transform: scale(1.04);
+	}
+
+	.card__category {
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #1d7a3a;
+	}
+
+	.card__meta {
+		margin: 8px 0 0;
+		font-size: 14px;
+		font-weight: 400;
+		color: #5e5e5e;
+	}
+
+	.card__title {
+		margin: 10px 0 0;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: #111111;
+	}
+
+	.card__excerpt {
+		margin: 10px 0 0;
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.5;
+		color: #5e5e5e;
+	}
+
+	.card__quote {
+		margin: 0;
+		padding-left: 14px;
+		border-left: 2px solid rgba(12, 43, 21, 0.15);
+	}
+
+	.card__quote blockquote {
+		margin: 0;
+		/* Lora's true italic: calligraphic letterforms rather than a slanted roman */
+		font-family: 'Lora', Georgia, serif;
+		font-size: 15px;
+		font-weight: 400;
+		font-style: italic;
+		line-height: 1.5;
+		color: #2b2b2b;
+	}
+
+	.card__quote figcaption {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-top: 10px;
+		font-size: 13px;
+		color: #5e5e5e;
+	}
+
+	.card__avatar {
+		width: 28px;
+		height: 28px;
+		flex: none;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	/* Takes the leftover height so the button can sit at the bottom of the card */
+	.card__more {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	/* :global because the class lands on the ArrowButton's own <a> */
+	.card__more :global(.card__btn) {
+		align-self: flex-start;
+		margin-top: auto;
+	}
+
+	/*
+	 * Hover reveal, same motion as the Insights cards: at rest the card reads as image on top,
+	 * text below; on hover the content box grows up to fill the card and the description, quote
+	 * and button fade in. Touch screens keep the stacked layout with everything showing.
+	 */
+	@media (hover: hover) and (min-width: 641px) {
+		.card {
+			/* A little taller than the article cards to fit the quote */
+			aspect-ratio: 4 / 5;
+		}
+
+		.card__media {
+			position: absolute;
+			inset: 0;
+			aspect-ratio: auto;
+		}
+
+		.card__box {
+			--ease: cubic-bezier(0.65, 0, 0.35, 1);
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			/* Just fits sector, highlight and name, with a small gap below */
+			height: max(120px, calc(120 * var(--u)));
+			overflow: hidden;
+			-webkit-backdrop-filter: blur(20px);
+			backdrop-filter: blur(20px);
+			transition:
+				height 0.35s var(--ease),
+				padding 0.35s var(--ease),
+				background-color 0.35s var(--ease);
+		}
+
+		.card:hover .card__box,
+		.card:focus-within .card__box {
+			height: 100%;
+			padding-top: 36px;
+			background: rgba(255, 255, 255, 0.88);
+		}
+
+		.card__more {
+			opacity: 0;
+			transform: translateY(8px);
+			transition:
+				opacity 0.2s ease,
+				transform 0.2s ease;
+		}
+
+		.card:hover .card__more,
+		.card:focus-within .card__more {
+			opacity: 1;
+			transform: none;
+			transition:
+				opacity 0.3s ease 0.15s,
+				transform 0.3s ease 0.15s;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.card__img,
+		.card__box,
+		.card__more {
+			transition: none !important;
+		}
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 1100px) {
+		.cards {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.startups {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(34px, 9vw, 44px);
+		}
+
+		.subtitle br {
+			display: none;
+		}
+
+		.cards {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.card__title {
+			font-size: 22px;
+		}
+	}
+</style>

@@ -5,7 +5,7 @@ import ArrowButton from './ArrowButton.astro';
 import eclinical from '../assets/eclinicalNew.png';
 import bank from '../assets/bank.png';
 
-interface Company {
+export interface Company {
 	name: string;
 	stat: { value: string; label: string; tag: string };
 	image?: ImageMetadata;
@@ -14,11 +14,21 @@ interface Company {
 	focus?: string;
 	// Slight zoom to trim artefacts at the image edges (e.g. 1.02)
 	zoom?: number;
-	info?: { title: string; text: string; href?: string };
+	// CSS background shown behind/instead of the image (stand-in until a photo is added)
+	tint?: string;
+	// cta defaults to "Read case study"; a cta without href renders as a static pill (e.g. "Coming soon")
+	info?: { title: string; text: string; href?: string; cta?: string };
+}
+
+interface Props {
+	id?: string;
+	title?: string;
+	subtitle?: string;
+	items?: Company[];
 }
 
 // Remaining cards get their images and info content later
-const companies: Company[] = [
+const defaultCompanies: Company[] = [
 	{
 		name: 'eClinical',
 		stat: { value: '$1B+', label: 'Revenue', tag: 'AI Systems · Healthcare' },
@@ -43,16 +53,22 @@ const companies: Company[] = [
 	},
 ];
 
+const {
+	id = 'work',
+	title = 'AI systems in action.',
+	subtitle = 'Real systems. Measurable impact. Built inside businesses where speed, accuracy, and control matter.',
+	items: companies = defaultCompanies,
+} = Astro.props;
+
+const titleId = `${id}-title`;
 const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 ---
 
-<section class="companies" id="work" aria-labelledby="companies-title">
+<section class="companies" id={id} aria-labelledby={titleId}>
 	<div class="head">
 		<div>
-			<h2 class="title" id="companies-title">AI systems in action.</h2>
-			<p class="subtitle">
-				Real systems. Measurable impact. Built inside businesses where speed, accuracy, and control matter.
-			</p>
+			<h2 class="title" id={titleId}>{title}</h2>
+			<p class="subtitle">{subtitle}</p>
 		</div>
 
 		<div class="controls">
@@ -69,10 +85,17 @@ const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		</div>
 	</div>
 
-	<ul class="track" aria-label="AI systems in action">
+	<ul class="track" aria-label={title.replace(/\.$/, '')}>
 		{
 			companies.map((company, i) => (
-				<li class="card" aria-label={`${i + 1} of ${companies.length}: ${company.name}`}>
+				<li
+					class="card"
+					aria-label={`${i + 1} of ${companies.length}: ${company.name}`}
+					style={company.tint ? `background:${company.tint}` : undefined}
+				>
+					{!company.image && company.tint && (
+						<span class="card__wordmark" aria-hidden="true">{company.name}</span>
+					)}
 					{company.image && (
 						<Image
 							src={company.image}
@@ -97,7 +120,11 @@ const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 							<h3 class="card__info-title">{company.info.title}</h3>
 							<p class="card__info-text">{company.info.text}</p>
 							<div class="card__info-cta">
-								<ArrowButton href={company.info.href ?? '#'} label="Read case study" />
+								{company.info.cta && !company.info.href ? (
+									<span class="card__info-soon">{company.info.cta}</span>
+								) : (
+									<ArrowButton href={company.info.href ?? '#'} label={company.info.cta ?? 'Read case study'} />
+								)}
 							</div>
 						</div>
 					)}
@@ -348,6 +375,36 @@ const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 		margin-top: auto;
 	}
 
+	/* Same footprint as the arrow button, but inert: for products not live yet */
+	.card__info-soon {
+		height: 52px;
+		min-width: 213px;
+		padding: 0 24px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(12, 43, 21, 0.2);
+		border-radius: 14px;
+		font-size: 15px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: rgba(12, 43, 21, 0.6);
+	}
+
+	/* Product name stand-in, centred on the tinted card until a screenshot is added */
+	.card__wordmark {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-size: max(72px, calc(72 * var(--u)));
+		font-weight: 500;
+		letter-spacing: -0.03em;
+		color: rgba(255, 255, 255, 0.92);
+		mix-blend-mode: overlay;
+	}
+
 	/* ---------- responsive + motion ---------- */
 
 	@media (max-width: 640px) {
@@ -413,11 +470,19 @@ const arrowPath = 'M1 8h15.5M10 1.5 16.5 8 10 14.5';
 			margin-top: 14px;
 		}
 
-		.card__info-cta :global(.arrow-btn) {
+		.card__info-cta :global(.arrow-btn),
+		.card__info-soon {
 			height: 44px;
 			min-width: 0;
 			padding: 0 18px;
 			font-size: 13px;
+		}
+
+		.card__wordmark {
+			font-size: 40px;
+			/* Sit in the gap between the stat panel and the info box */
+			place-items: start center;
+			padding-top: 45%;
 		}
 	}
 

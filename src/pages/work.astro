@@ -4,9 +4,36 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Impact from '../components/Impact.astro';
 import FeaturedWork from '../components/FeaturedWork.astro';
+import Companies, { type Company } from '../components/Companies.astro';
+import StartupWork from '../components/StartupWork.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Footer from '../components/Footer.astro';
 import workHero from '../assets/workNewBg.png';
+
+// Tinted stand-ins until the product screenshots are added (set `image` + `alt` to swap)
+const products: Company[] = [
+	{
+		name: 'RedRank',
+		stat: { value: '24/7', label: 'Reddit lead discovery', tag: 'Product · AI · SaaS' },
+		tint: 'radial-gradient(120% 90% at 30% 20%, #ffb089 0%, #ff6a2b 45%, #c73a0c 100%)',
+		info: {
+			title: 'RedRank',
+			text: 'Find high-intent Reddit leads for your SaaS on autopilot. We built it, we use it, we sell it.',
+			cta: 'Coming soon',
+		},
+	},
+	{
+		name: 'Free Ship Fast',
+		stat: { value: 'Hours', label: 'Idea to production', tag: 'Product · AI · No-code' },
+		tint: 'radial-gradient(120% 90% at 70% 30%, #3a3a3a 0%, #141414 50%, #000000 100%)',
+		info: {
+			title: 'Free Ship Fast',
+			text: 'Build and deploy custom AI chatbots with zero code.',
+			href: '#',
+			cta: 'Visit FreeShipFast',
+		},
+	},
+];
 ---
 
 <Layout title="Work | VixeraLabs">
@@ -34,6 +61,15 @@ import workHero from '../assets/workNewBg.png';
 	<Impact />
 
 	<FeaturedWork />
+
+	<Companies
+		id="products"
+		title="Products we built ourselves."
+		subtitle="We build, run and sell our own products, so we know what it takes to ship one."
+		items={products}
+	/>
+
+	<StartupWork />
 
 	<CtaBanner />
 	<Footer />
