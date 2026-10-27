@@ -3,42 +3,40 @@ import { Image } from 'astro:assets';
 import ArrowButton from './ArrowButton.astro';
 import bookACall from '../assets/bookAcall.png';
 
-// Only the first answer came from the design; the rest are drafts to be reviewed
 const faqs = [
 	{
-		q: 'How long does a project take?',
-		a: 'MVPs ship in 2 weeks. Full product builds run 4–6 weeks. We lock scope before we start, so the timeline is the timeline - no slipping, no surprise invoices.',
+		q: 'What is AI automation?',
+		a: 'AI automation uses AI models and agents to run repetitive business work end to end: reading emails and documents, updating systems and making routine decisions. Unlike rule-based tools, it handles messy inputs. Vixera Labs builds it around your existing SOPs.',
 	},
 	{
-		q: 'Who will I actually be working with?',
-		a: 'A small senior team - the same engineers and designer from kickoff to launch. No account managers in between, no handoffs to juniors once the contract is signed.',
+		q: 'What business processes can be automated with AI?',
+		a: 'Any process your team repeats step by step: lead intake and routing, CRM updates, document checks, approvals, follow-ups and reporting. Vixera Labs has automated CRM operations for a $3B healthcare software company and SME credit checks in Southeast Asia.',
 	},
 	{
-		q: "What if I'm not happy with the results?",
-		a: "You see working progress every week, so nothing lands as a surprise at the end. If something isn't right, we fix it before we move on - that's built into the scope, not billed extra.",
+		q: 'How long does AI automation take to implement?',
+		a: 'Most AI automation projects at Vixera Labs go live in 2–6 weeks; enterprise integrations take 8–12. Mckayn’s operations went live in about two weeks. You get a fixed go-live date before any work starts.',
 	},
 	{
-		q: 'Do you work with non-technical founders?',
-		a: "Most of our founders aren't technical. We explain every decision in plain language, handle the architecture and infrastructure, and hand over a product you fully own and understand.",
+		q: 'How much does AI automation cost?',
+		a: 'AI automation at Vixera Labs is fixed-price, starting from [$X]. The final price depends on the workflows and tools involved, and you get the exact quote after a free 30-minute audit, before any work starts.',
 	},
 	{
-		q: 'What if I need changes after launch?',
-		a: 'Every build includes a support window after launch for fixes and small tweaks. For new features, we scope them the same way as the original build - fixed price, fixed timeline.',
+		q: 'How is Vixera Labs different from Zapier or n8n?',
+		a: 'Zapier and n8n connect apps with fixed rules, which suits simple triggers. Vixera Labs builds custom AI systems with LangChain and OpenAI that read documents, make routine decisions and run whole processes, like Mckayn’s custom CRM.',
 	},
 	{
-		q: 'How much does it cost?',
-		a: "It depends on scope, but you'll get a fixed price before any work starts. Book a free roadmap call and we'll map your workflows and give you a clear quote.",
+		q: 'Is our data safe with AI automation?',
+		a: 'Yes. Vixera Labs gives each AI system access only to the data a workflow needs, with role-based access controls and a security review on enterprise builds. You own all the code, data and accounts.',
 	},
 ];
 ---
 
 <section class="faq" id="faq" aria-labelledby="faq-title">
 	<div class="head">
-		<p class="eyebrow">FAQs</p>
-		<h2 class="title" id="faq-title">Questions founders ask us.</h2>
+		<p class="eyebrow">FAQ</p>
+		<h2 class="title" id="faq-title">Questions about AI automation</h2>
 		<p class="subtitle">
-			Every founder who worked with us had these same doubts.<br />
-			Here's what we told them.
+			What business owners and ops teams ask Vixera Labs before handing work to AI.
 		</p>
 	</div>
 
@@ -91,9 +89,10 @@ const faqs = [
 			<div class="panel__box">
 				<h3 class="panel__title" id="faq-cta-title">Still have questions?</h3>
 				<p class="panel__text">
-					Book a free roadmap call. We'll map your workflows and give you a fixed quote.
+					Book a free 30-minute automation audit. We’ll map your workflows, show you what to automate first and give
+					you a fixed quote.
 				</p>
-				<ArrowButton href="#contact" label="Book a Call" />
+				<ArrowButton href="#contact" label="Get a Free Audit" />
 			</div>
 		</aside>
 	</div>
@@ -227,7 +226,7 @@ const faqs = [
 	}
 
 	.answer p {
-		max-width: 470px;
+		max-width: 640px;
 		margin: 0;
 		padding: 0 0 22px 40px;
 		font-size: 16px;

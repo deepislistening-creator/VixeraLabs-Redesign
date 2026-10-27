@@ -1,16 +1,32 @@
 ---
+import ArrowButton from './ArrowButton.astro';
+
 interface Props {
 	// false renders just the intro, e.g. as a page lead-in
 	showStats?: boolean;
+	// Adds the "updated" note and CTA row under the stats
+	showActions?: boolean;
 }
 
-const { showStats = true } = Astro.props;
+const { showStats = true, showActions = false } = Astro.props;
 
 const stats = [
-	{ prefix: '$', value: 40, suffix: 'M+', label: 'Capital raised by our clients' },
-	{ prefix: '$', value: 182, suffix: 'M+', label: 'Combined client valuation' },
-	{ prefix: '', value: 5, suffix: '', label: 'Client companies acquired' },
-	{ prefix: '', value: 44, suffix: '+', label: 'Products & systems shipped' },
+	{
+		prefix: '$',
+		value: 40,
+		suffix: 'M+',
+		label: 'Raised by companies we’ve built for',
+		note: 'Including a $4M Shark Tank deal for Janitri',
+	},
+	{
+		prefix: '$',
+		value: 182,
+		suffix: 'M+',
+		label: 'Combined client valuation',
+		note: 'Across healthcare, lending, SaaS and services',
+	},
+	{ prefix: '', value: 5, suffix: '', label: 'Client companies acquired', note: 'Including PulzCAD, before launch' },
+	{ prefix: '', value: 44, suffix: '+', label: 'Products & AI systems shipped', note: 'Building software since 2015' },
 ];
 ---
 
@@ -40,11 +56,27 @@ const stats = [
 							data-suffix={stat.suffix}
 						>{`${stat.prefix}${stat.value}${stat.suffix}`}</span>
 					</span>
-					<span class="stat__label">{stat.label}</span>
+					<span class="stat__text">
+						<span class="stat__label">{stat.label}</span>
+						<span class="stat__note">{stat.note}</span>
+					</span>
 				</li>
 			))
 		}
 	</ul>
+	)}
+
+	{showStats && showActions && (
+	<div class="actions">
+		<p class="actions__meta">
+			<span class="actions__dot" aria-hidden="true" />
+			Updated October 2026 · Clients in the US, the Middle East and Southeast Asia
+		</p>
+		<div class="actions__ctas">
+			<ArrowButton href="#service" label="See what we automate" />
+			<ArrowButton href="/work" label="See client results" class="arrow-btn--secondary" />
+		</div>
+	</div>
 	)}
 </section>
 
@@ -129,6 +161,64 @@ const stats = [
 		color: #5e5e5e;
 	}
 
+	.stat__text {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.stat__note {
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: max(15px, calc(15 * var(--u)));
+		font-weight: 300;
+		line-height: 1.4;
+		color: #8a8a8a;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		margin-top: max(72px, calc(72 * var(--u)));
+		padding-top: max(28px, calc(28 * var(--u)));
+		border-top: 1px solid #e8e8e8;
+	}
+
+	.actions__meta {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin: 0;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		color: #5e5e5e;
+	}
+
+	.actions__dot {
+		width: 7px;
+		height: 7px;
+		flex: none;
+		border-radius: 50%;
+		background: #3ddc6b;
+	}
+
+	.actions__ctas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	.actions :global(.arrow-btn--secondary) {
+		background: #efebe5;
+	}
+
+	.actions :global(.arrow-btn--secondary:hover) {
+		background: #e6e1d9;
+	}
+
 	@media (max-width: 1100px) {
 		.stats {
 			display: grid;
@@ -166,6 +256,10 @@ const stats = [
 
 		.stat__label {
 			font-size: 15px;
+		}
+
+		.stat__note {
+			font-size: 13px;
 		}
 	}
 </style>

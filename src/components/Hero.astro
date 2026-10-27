@@ -11,14 +11,17 @@ import ArrowButton from './ArrowButton.astro';
 	<FeaturedCard />
 
 	<div class="content">
-		<p class="label">AI system consultancy</p>
-		<h1 class="heading">AI agents run the workflows.<br />You make the final call.</h1>
+		<p class="label">AI automation agency</p>
+		<h1 class="heading">Do you want AI to operate<br />and scale your business?</h1>
 		<p class="subheading">
-			We build AI systems that remove repetitive work while keeping critical decisions in your hands.
+			<strong>Vixera Labs is an AI automation agency.</strong> We’ve automated operations for a{' '}
+			<strong>$1B-revenue healthcare software company</strong>, <strong>Southeast Asia’s largest credit guarantee
+			corporation</strong> and a <strong>lead gen agency that’s made $5M</strong> since go-live.
 		</p>
+		<p class="subheading"><strong>Don’t add headcount. Let AI run your SOPs.</strong></p>
 		<div class="ctas">
-			<ArrowButton href="#contact" label="Map My Workflows" />
-			<a class="cta cta--secondary" href="/work">View Our Work</a>
+			<ArrowButton href="#contact" label="Yes, Get My Free Audit" />
+			<a class="cta cta--secondary" href="/work">See the Results</a>
 		</div>
 	</div>
 </section>
@@ -74,6 +77,11 @@ import ArrowButton from './ArrowButton.astro';
 		font-weight: 400;
 		line-height: 1.5;
 		color: #313131;
+	}
+
+	.subheading strong {
+		font-weight: 600;
+		color: #0c2b15;
 	}
 
 	.ctas {

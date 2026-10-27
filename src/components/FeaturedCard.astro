@@ -1,45 +1,32 @@
 ---
 interface Feature {
-	area: string;
-	score: number;
-	flow: [string, string, string];
-	stat: { label: string; split: [number, number, number]; legend: [string, string, string] };
-	text: string;
+	tag: string;
+	title: string;
 	link: { label: string; href: string };
 }
 
-// Placeholder figures: replace with real numbers before launch
 const features: Feature[] = [
 	{
-		area: 'Support ops',
-		score: 84,
-		flow: ['Ticket in', 'AI triage', 'Human review'],
-		stat: { label: 'Tickets resolved by AI', split: [73, 19, 8], legend: ['Resolved by AI', 'Needs review', 'Escalated'] },
-		text: 'Support agents that triage and resolve routine tickets, and hand the edge cases to your team.',
-		link: { label: 'Customer support automation', href: '#work' },
+		tag: 'Healthcare · AI automation',
+		title: 'Automating a $1B-revenue healthcare system.',
+		link: { label: 'Read the healthcare case study', href: '/work' },
 	},
 	{
-		area: 'Finance ops',
-		score: 91,
-		flow: ['Invoice in', 'AI extract', 'Approve'],
-		stat: { label: 'Invoices processed', split: [86, 10, 4], legend: ['Auto-processed', 'Flagged', 'Manual'] },
-		text: 'Invoices read, matched and coded automatically. Your finance team approves, not types.',
-		link: { label: 'Finance operations', href: '#work' },
+		tag: 'Finance · SME lending',
+		title: 'Automating $1B+ in SME credit across Southeast Asia.',
+		link: { label: 'Read the SME lending case study', href: '/work' },
 	},
 	{
-		area: 'Sales ops',
-		score: 78,
-		flow: ['Lead in', 'AI qualify', 'Rep call'],
-		stat: { label: 'Leads qualified', split: [64, 24, 12], legend: ['Auto-qualified', 'Needs a rep', 'Disqualified'] },
-		text: 'Every inbound lead researched, scored and routed before a rep picks up the phone.',
-		link: { label: 'Sales pipeline automation', href: '#work' },
+		tag: 'Agency · Operations',
+		title: '12-hour days to 10 minutes for a $5M agency.',
+		link: { label: 'Read the Mckayn case study', href: '/work' },
 	},
 ];
 
 const INTERVAL_MS = 5500;
 ---
 
-<aside class="featured" aria-label="Featured work" style={`--interval:${INTERVAL_MS}ms`}>
+<aside class="featured" aria-label="Client results" style={`--interval:${INTERVAL_MS}ms`}>
 	<div class="deck">
 		{
 			features.map((feature, i) => (
@@ -52,7 +39,7 @@ const INTERVAL_MS = 5500;
 					<div class="featured__head">
 						<span class="featured__eyebrow">
 							<span class="featured__dot" />
-							Featured
+							Client results
 						</span>
 						<div class="featured__pips">
 							{features.map((f, p) => (
@@ -69,71 +56,11 @@ const INTERVAL_MS = 5500;
 						</div>
 					</div>
 
-					<div class="tiles" aria-hidden="true">
-						{/* Gauge */}
-						<div class="tile tile--gauge" style="--i:0">
-							<span class="tile__label">Automation score</span>
-							<svg class="gauge" viewBox="0 0 100 60">
-								<path class="gauge__track" d="M12 54 A38 38 0 0 1 88 54" pathLength="100" />
-								<path
-									class="gauge__value"
-									d="M12 54 A38 38 0 0 1 88 54"
-									pathLength="100"
-									style={`--offset:${100 - feature.score}`}
-								/>
-							</svg>
-							<span class="gauge__score">
-								{feature.score}
-								<small>/ 100</small>
-							</span>
-							<span class="tile__caption">{feature.area}</span>
-						</div>
-
-						{/* Workflow */}
-						<div class="tile tile--flow" style="--i:1">
-							<span class="tile__label">Workflow</span>
-							<ol class="flow">
-								{feature.flow.map((step, s) => (
-									<li class:list={['flow__step', { 'flow__step--ai': s === 1 }]} style={`--s:${s}`}>
-										<span class="flow__dot" />
-										{step}
-									</li>
-								))}
-							</ol>
-						</div>
-
-						{/* Stats */}
-						<div class="tile tile--stat" style="--i:2">
-							<span class="tile__label">{feature.stat.label}</span>
-							<span class="stat__value">{feature.stat.split[0]}%</span>
-							<span class="stat__bar">
-								{feature.stat.split.map((w, s) => (
-									<span class={`stat__seg stat__seg--${s}`} style={`--w:${w}%;--s:${s}`} />
-								))}
-							</span>
-							<ul class="stat__legend">
-								{feature.stat.legend.map((item, s) => (
-									<li>
-										<span class={`stat__key stat__seg--${s}`} />
-										{item} · {feature.stat.split[s]}%
-									</li>
-								))}
-							</ul>
-						</div>
-					</div>
-
-					<p class="slide__text">{feature.text}</p>
+					<p class="slide__tag">{feature.tag}</p>
+					<p class="slide__title">{feature.title}</p>
 					<a class="slide__link" href={feature.link.href}>
 						{feature.link.label}
-						<svg viewBox="0 0 18 16" fill="none" aria-hidden="true">
-							<path
-								d="M1 8h15.5M10 1.5 16.5 8 10 14.5"
-								stroke="currentColor"
-								stroke-width="1.6"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-						</svg>
+						<span class="slide__arrow" aria-hidden="true">→</span>
 					</a>
 					</div>
 				</article>
@@ -282,14 +209,8 @@ const INTERVAL_MS = 5500;
 		transition: opacity 0.4s ease 0.3s;
 	}
 
-	.tiles {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 8px;
-	}
-
-	.tile,
-	.slide__text,
+	.slide__tag,
+	.slide__title,
 	.slide__link {
 		opacity: 0;
 		transform: translateY(12px);
@@ -298,8 +219,8 @@ const INTERVAL_MS = 5500;
 			transform 0.35s ease;
 	}
 
-	.is-active .tile,
-	.is-active .slide__text,
+	.is-active .slide__tag,
+	.is-active .slide__title,
 	.is-active .slide__link {
 		opacity: 1;
 		transform: none;
@@ -308,263 +229,56 @@ const INTERVAL_MS = 5500;
 			transform 0.7s var(--ease);
 	}
 
-	.is-active .tile {
-		transition-delay: calc(0.4s + var(--i) * 0.09s);
+	.is-active .slide__tag {
+		transition-delay: 0.4s;
 	}
 
-	.is-active .slide__text {
-		transition-delay: 0.65s;
+	.is-active .slide__title {
+		transition-delay: 0.49s;
 	}
 
 	.is-active .slide__link {
-		transition-delay: 0.73s;
-	}
-
-	.tile {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		height: 128px;
-		padding: 10px;
-		border-radius: 12px;
-		overflow: hidden;
-	}
-
-	.tile__label {
-		font-size: 8.5px;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		line-height: 1.3;
-		text-transform: uppercase;
-	}
-
-	.tile__caption {
-		margin-top: auto;
-		font-size: 9px;
-		opacity: 0.7;
-	}
-
-	/* gauge tile */
-	.tile--gauge {
-		background: var(--ink);
-		color: #ffffff;
-	}
-
-	.tile--gauge .tile__label {
-		opacity: 0.75;
-	}
-
-	.gauge {
-		width: 74%;
-		margin: 6px auto 0;
-		overflow: visible;
-	}
-
-	.gauge path {
-		fill: none;
-		stroke-width: 7;
-		stroke-linecap: round;
-	}
-
-	.gauge__track {
-		stroke: rgba(255, 255, 255, 0.14);
-	}
-
-	.gauge__value {
-		stroke: var(--green);
-		stroke-dasharray: 100;
-		stroke-dashoffset: 100;
-		transition: stroke-dashoffset 0.4s ease;
-	}
-
-	.is-active .gauge__value {
-		stroke-dashoffset: var(--offset);
-		transition: stroke-dashoffset 1.3s var(--ease) 0.35s;
-	}
-
-	.gauge__score {
-		margin-top: 2px;
-		text-align: center;
-		font-size: 20px;
-		font-weight: 600;
-		line-height: 1;
-	}
-
-	.gauge__score small {
-		font-size: 10px;
-		font-weight: 400;
-		opacity: 0.6;
-	}
-
-	.tile--gauge .tile__caption {
-		text-align: center;
-	}
-
-	/* workflow tile */
-	.tile--flow {
-		background:
-			linear-gradient(rgba(12, 43, 21, 0.05) 1px, transparent 1px) 0 0 / 12px 12px,
-			linear-gradient(90deg, rgba(12, 43, 21, 0.05) 1px, transparent 1px) 0 0 / 12px 12px,
-			rgba(255, 255, 255, 0.85);
-		color: var(--ink);
-	}
-
-	.tile--flow .tile__label {
-		opacity: 0.6;
-	}
-
-	.flow {
-		display: flex;
-		flex-direction: column;
-		gap: 9px;
-		margin: auto 0 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.flow__step {
-		position: relative;
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		height: 22px;
-		padding: 0 8px;
-		border: 1px solid rgba(12, 43, 21, 0.1);
-		border-radius: 7px;
-		background: #ffffff;
-		font-size: 9.5px;
-		font-weight: 500;
-		white-space: nowrap;
-		animation: flow-active 3s ease-in-out infinite;
-		animation-delay: calc(var(--s) * 1s);
-	}
-
-	/* connector to the next step */
-	.flow__step:not(:last-child)::after {
-		content: '';
-		position: absolute;
-		left: 11px;
-		top: 100%;
-		width: 1px;
-		height: 9px;
-		background: rgba(12, 43, 21, 0.25);
-	}
-
-	.flow__dot {
-		width: 5px;
-		height: 5px;
-		flex: none;
-		border-radius: 50%;
-		background: rgba(12, 43, 21, 0.35);
-	}
-
-	.flow__step--ai .flow__dot {
-		background: #3ddc6b;
-	}
-
-	/* stats tile */
-	.tile--stat {
-		background: rgba(255, 255, 255, 0.85);
-		color: var(--ink);
-	}
-
-	.tile--stat .tile__label {
-		opacity: 0.6;
-	}
-
-	.stat__value {
-		margin-top: auto;
-		font-size: 24px;
-		font-weight: 600;
-		line-height: 1;
-	}
-
-	.stat__bar {
-		display: flex;
-		gap: 2px;
-		height: 5px;
-		margin: 8px 0;
-	}
-
-	.stat__seg {
-		height: 100%;
-		border-radius: 3px;
-	}
-
-	.stat__bar .stat__seg {
-		width: 0;
-		transition: width 0.4s ease;
-	}
-
-	.is-active .stat__bar .stat__seg {
-		width: var(--w);
-		transition: width 0.9s var(--ease);
-		transition-delay: calc(0.45s + var(--s) * 0.12s);
-	}
-
-	.stat__seg--0 {
-		background: #3ddc6b;
-	}
-
-	.stat__seg--1 {
-		background: #c9d3cc;
-	}
-
-	.stat__seg--2 {
-		background: var(--ink);
-	}
-
-	.stat__legend {
-		display: grid;
-		gap: 3px;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		font-size: 8.5px;
-		color: rgba(12, 43, 21, 0.7);
-		white-space: nowrap;
-	}
-
-	.stat__legend li {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-	}
-
-	.stat__key {
-		width: 5px;
-		height: 5px;
-		flex: none;
-		border-radius: 1px;
+		transition-delay: 0.58s;
 	}
 
 	/* ---------- text + link ---------- */
 
-	.slide__text {
-		margin: 16px 0 0;
-		font-size: 15px;
-		line-height: 1.45;
-		color: #212427;
+	.slide__tag {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		color: #3f8a34;
+	}
+
+	.slide__title {
+		margin: 6px 0 0;
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: 26px;
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: var(--ink);
+		text-wrap: balance;
 	}
 
 	.slide__link {
 		display: inline-flex;
 		align-items: center;
-		gap: 10px;
-		margin-top: 12px;
+		gap: 6px;
+		margin-top: 20px;
 		font-size: 15px;
-		font-weight: 500;
+		font-weight: 600;
 		color: var(--ink);
 		text-decoration: none;
 	}
 
-	.slide__link svg {
-		width: 18px;
+	.slide__arrow {
 		transition: transform 0.35s var(--ease);
 	}
 
-	.slide__link:hover svg,
-	.slide__link:focus-visible svg {
+	.slide__link:hover .slide__arrow,
+	.slide__link:focus-visible .slide__arrow {
 		transform: translateX(4px);
 	}
 
@@ -609,20 +323,6 @@ const INTERVAL_MS = 5500;
 		}
 	}
 
-	@keyframes flow-active {
-		0%,
-		40%,
-		100% {
-			background: #ffffff;
-			border-color: rgba(12, 43, 21, 0.1);
-		}
-		15%,
-		25% {
-			background: #e3fddb;
-			border-color: rgba(61, 220, 107, 0.6);
-		}
-	}
-
 	/* ---------- responsive + motion ---------- */
 
 	@media (max-width: 1500px) {
@@ -630,8 +330,8 @@ const INTERVAL_MS = 5500;
 			width: 400px;
 		}
 
-		.tile {
-			height: 120px;
+		.slide__title {
+			font-size: 24px;
 		}
 	}
 
@@ -650,7 +350,6 @@ const INTERVAL_MS = 5500;
 		}
 
 		.featured__dot,
-		.flow__step,
 		.slide.is-leaving {
 			animation: none;
 		}
@@ -660,11 +359,9 @@ const INTERVAL_MS = 5500;
 			transition: none !important;
 		}
 
-		.tile,
-		.slide__text,
-		.slide__link,
-		.gauge__value,
-		.stat__bar .stat__seg {
+		.slide__tag,
+		.slide__title,
+		.slide__link {
 			transition: none !important;
 		}
 	}
