@@ -1,0 +1,353 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import why1 from '../assets/Why1.png';
+import why2 from '../assets/Why2.png';
+import why3 from '../assets/Why3.png';
+
+interface Reason {
+	tag: string;
+	title: string;
+	text: string;
+	proof: string;
+	image?: ImageMetadata;
+	alt?: string;
+	// CSS object-position: the 3:2 photos are cropped to a portrait card, so this picks what stays in frame
+	focus?: string;
+	// Shown until an image is added, and behind it while it loads
+	placeholder: string;
+}
+
+const reasons: Reason[] = [
+	{
+		tag: 'Built to scale',
+		title: 'Software that’s held up for millions of users',
+		text: 'Our team has shipped apps with 100M+ downloads. Your AI system gets the same engineering, so it keeps working as volume grows.',
+		proof: '100M+ downloads · since 2015',
+		image: why1,
+		alt: 'Bundles of glowing glass cables branching out from a central column',
+		focus: '30% center',
+		placeholder: 'linear-gradient(160deg, #0a0a0a 0%, #0c2b15 60%, #3ddc6b 140%)',
+	},
+	{
+		tag: 'Trusted with sensitive work',
+		title: 'Healthcare, lending and public sector',
+		text: 'We’ve built systems for healthcare software, SME credit decisions and a public-sector office, where errors are expensive.',
+		proof: '$1B+ in SME loans · US public sector',
+		image: why2,
+		alt: 'A hospital corridor beside a locked glass records room',
+		focus: '62% center',
+		placeholder: 'linear-gradient(160deg, #e3fddb 0%, #96f878 55%, #3ddc6b 100%)',
+	},
+	{
+		tag: 'Same senior team',
+		title: 'The founders are on every project',
+		text: 'No account managers and no handoffs to juniors. The people who scope your system build it and support it.',
+		proof: 'Founder-led since 2015',
+		image: why3,
+		alt: 'Three senior team members reviewing a system diagram at a meeting table',
+		focus: '45% center',
+		placeholder: 'linear-gradient(160deg, #1d5a32 0%, #0c2b15 100%)',
+	},
+];
+---
+
+<section class="why" aria-labelledby="why-title">
+	<div class="head">
+		<p class="eyebrow">Why it matters</p>
+		<h2 class="title" id="why-title">Why does eleven years of engineering matter for AI automation?</h2>
+		<p class="intro">
+			Because automation that breaks at scale costs more than the manual work it replaced. An AI system that runs your
+			leads, loans or CRM has to work every day, at volume, with sensitive data. That’s the kind of software we’ve built
+			since 2015.
+		</p>
+	</div>
+
+	<ul class="cards">
+		{
+			reasons.map((item) => (
+				<li class="card" style={`--placeholder:${item.placeholder}`}>
+					{item.image && (
+						<Image
+							src={item.image}
+							alt={item.alt ?? ''}
+							widths={[640, 960, 1280, 1536]}
+							sizes="(max-width: 640px) 170vw, (max-width: 900px) 100vw, 60vw"
+							format="webp"
+							loading="lazy"
+							class="card__img"
+							style={`object-position:${item.focus ?? 'center'}`}
+						/>
+					)}
+
+					<span class="card__tag">{item.tag}</span>
+
+					<div class="card__box">
+						<h3 class="card__title">{item.title}</h3>
+						<p class="card__text">{item.text}</p>
+						<p class="card__proof">{item.proof}</p>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+</section>
+
+<style>
+	.why {
+		--pad: max(60px, calc(60 * var(--u)));
+		--ink: #0c2b15;
+		--body: #3b4a40;
+		background: #ffffff;
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		font-family: 'Inter', system-ui, sans-serif;
+		color: var(--ink);
+	}
+
+	/* ---------- heading: same treatment as Our story ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #2f6b25;
+	}
+
+	.title {
+		max-width: max(960px, calc(960 * var(--u)));
+		margin: 12px 0 0;
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.01em;
+		color: var(--ink);
+		text-wrap: balance;
+	}
+
+	.intro {
+		max-width: max(760px, calc(760 * var(--u)));
+		margin: 20px 0 0;
+		font-size: max(16px, calc(16 * var(--u)));
+		font-weight: 400;
+		line-height: 1.6;
+		color: var(--body);
+	}
+
+	/* ---------- cards: same build as the Principles cards ---------- */
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 24px;
+		margin: max(48px, calc(48 * var(--u))) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		position: relative;
+		aspect-ratio: 10 / 11;
+		overflow: hidden;
+		background: var(--placeholder);
+		/* Backdrop root, so the glass blur can't pull in the page colour at the edges */
+		clip-path: inset(0);
+	}
+
+	/* The photos are 3:2 but the cards are portrait, so each image renders ~1.9x the card's width */
+	.card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* Darkens the top-left corner so the white tag reads on light photos */
+	.card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+			120% 55% at 0% 0%,
+			rgba(12, 43, 21, 0.8) 0%,
+			rgba(12, 43, 21, 0.4) 45%,
+			rgba(12, 43, 21, 0) 75%
+		);
+		pointer-events: none;
+	}
+
+	.card__tag,
+	.card__box {
+		z-index: 1;
+	}
+
+	.card__tag {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		padding: 6px 14px;
+		border: 1px solid rgba(255, 255, 255, 0.85);
+		border-radius: 8px;
+		background: rgba(12, 43, 21, 0.35);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #ffffff;
+	}
+
+	.card__box {
+		position: absolute;
+		left: 20px;
+		right: 20px;
+		bottom: 20px;
+		display: flex;
+		flex-direction: column;
+		padding: 22px 20px;
+		border-radius: 16px;
+		background: rgba(255, 255, 255, 0.72);
+		-webkit-backdrop-filter: blur(20px);
+		backdrop-filter: blur(20px);
+	}
+
+	.card__title {
+		margin: 0;
+		font-size: max(26px, calc(26 * var(--u)));
+		font-weight: 300;
+		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: #111111;
+	}
+
+	.card__text {
+		margin: 10px 0 0;
+		font-size: 15px;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #313131;
+	}
+
+	.card__proof {
+		margin: 14px 0 0;
+		font-size: 14px;
+		font-weight: 600;
+		color: #2f6b25;
+	}
+
+	/*
+	 * Hover reveal, same motion as the Principles cards: at rest the glass box shows only the title;
+	 * on hover it grows up to fill the card and the description and proof line fade in. Touch screens
+	 * have no hover, so they keep the box open with everything showing.
+	 */
+	@media (hover: hover) and (min-width: 641px) {
+		.card__box {
+			/* Fits a two-line title, same as the Principles cards */
+			height: max(116px, calc(116 * var(--u)));
+			overflow: hidden;
+			--ease: cubic-bezier(0.65, 0, 0.35, 1);
+			transition:
+				height 0.35s var(--ease),
+				left 0.35s var(--ease),
+				right 0.35s var(--ease),
+				bottom 0.35s var(--ease),
+				padding 0.35s var(--ease),
+				border-radius 0.35s var(--ease);
+		}
+
+		/* Open: the glass fills the card edge to edge. Padding grows by the 20px inset it loses, so the text doesn't shift sideways */
+		.card:hover .card__box {
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 100%;
+			padding: 42px 40px;
+			border-radius: 0;
+		}
+
+		/* Proof line sits at the bottom of the open card */
+		.card__proof {
+			margin-top: auto;
+			padding-top: 14px;
+		}
+
+		.card__text,
+		.card__proof {
+			opacity: 0;
+			transform: translateY(8px);
+			transition:
+				opacity 0.2s ease,
+				transform 0.2s ease;
+		}
+
+		.card:hover .card__text,
+		.card:hover .card__proof {
+			opacity: 1;
+			transform: none;
+			transition:
+				opacity 0.3s ease 0.15s,
+				transform 0.3s ease 0.15s;
+		}
+
+		/* The tag would show blurred through the expanded glass, so it steps out */
+		.card__tag {
+			transition: opacity 0.2s ease 0.2s;
+		}
+
+		.card:hover .card__tag {
+			opacity: 0;
+			transition-delay: 0s;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.card__box,
+		.card__text,
+		.card__proof,
+		.card__tag {
+			transition: none !important;
+		}
+	}
+
+	/* ---------- responsive ---------- */
+
+	/* One card per row: a landscape crop keeps them from getting too tall */
+	@media (max-width: 900px) {
+		.cards {
+			grid-template-columns: 1fr;
+		}
+
+		.card {
+			aspect-ratio: 16 / 10;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.why {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(32px, 8.5vw, 44px);
+		}
+
+		.cards {
+			gap: 16px;
+			margin-top: 40px;
+		}
+
+		.card {
+			aspect-ratio: 4 / 5;
+		}
+
+		.card__title {
+			font-size: 22px;
+		}
+	}
+</style>

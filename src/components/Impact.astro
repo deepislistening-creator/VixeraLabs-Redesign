@@ -1,16 +1,26 @@
 ---
 import ArrowButton from './ArrowButton.astro';
 
+interface Stat {
+	prefix: string;
+	value: number;
+	suffix: string;
+	label: string;
+	note?: string;
+	// false shows the value as-is instead of counting up (e.g. a year)
+	count?: boolean;
+}
+
 interface Props {
 	// false renders just the intro, e.g. as a page lead-in
 	showStats?: boolean;
 	// Adds the "updated" note and CTA row under the stats
 	showActions?: boolean;
+	// Pages can pass their own figures; defaults to the home page set
+	stats?: Stat[];
 }
 
-const { showStats = true, showActions = false } = Astro.props;
-
-const stats = [
+const defaultStats: Stat[] = [
 	{
 		prefix: '$',
 		value: 40,
@@ -28,9 +38,16 @@ const stats = [
 	{ prefix: '', value: 5, suffix: '', label: 'Client companies acquired', note: 'Including PulzCAD, before launch' },
 	{ prefix: '', value: 44, suffix: '+', label: 'Products & AI systems shipped', note: 'Building software since 2015' },
 ];
+
+const { showStats = true, showActions = false, stats = defaultStats } = Astro.props;
+// Five or more figures sit in a three-column grid instead of one row
+const isGrid = stats.length > 4;
 ---
 
 <section class:list={['impact', { 'impact--intro-only': !showStats }]} id="impact" aria-labelledby="impact-intro">
+	{/* Optional block above the intro, e.g. a client logo strip */}
+	<slot name="before-intro" />
+
 	<p class="intro" id="impact-intro">
 		{/* Pages can pass their own intro; wrap the lead-in in <strong> for the dark green emphasis */}
 		<slot>
@@ -40,7 +57,7 @@ const stats = [
 	</p>
 
 	{showStats && (
-	<ul class="stats">
+	<ul class:list={['stats', { 'stats--grid': isGrid }]}>
 		{
 			stats.map((stat) => (
 				<li class="stat">
@@ -52,13 +69,13 @@ const stats = [
 							class="stat__count"
 							aria-hidden="true"
 							data-prefix={stat.prefix}
-							data-value={stat.value}
+							data-value={stat.count === false ? undefined : stat.value}
 							data-suffix={stat.suffix}
 						>{`${stat.prefix}${stat.value}${stat.suffix}`}</span>
 					</span>
 					<span class="stat__text">
 						<span class="stat__label">{stat.label}</span>
-						<span class="stat__note">{stat.note}</span>
+						{stat.note && <span class="stat__note">{stat.note}</span>}
 					</span>
 				</li>
 			))
@@ -113,6 +130,12 @@ const stats = [
 		margin: max(72px, calc(72 * var(--u))) 0 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	.stats--grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		row-gap: max(64px, calc(64 * var(--u)));
 	}
 
 	.stat {
@@ -271,7 +294,7 @@ const stats = [
 	// Fast start, gentle landing
 	const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
 
-	const counters = document.querySelectorAll<HTMLElement>('.stat__count');
+	const counters = document.querySelectorAll<HTMLElement>('.stat__count[data-value]');
 	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	function render(el: HTMLElement, value: number) {

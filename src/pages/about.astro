@@ -3,12 +3,24 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Impact from '../components/Impact.astro';
+import OurStory from '../components/OurStory.astro';
+import WhyItMatters from '../components/WhyItMatters.astro';
+import WorkedWith from '../components/WorkedWith.astro';
 import SelectedWork from '../components/SelectedWork.astro';
 import Principles from '../components/Principles.astro';
 import Faq from '../components/Faq.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Footer from '../components/Footer.astro';
 import aboutHero from '../assets/About.png';
+
+const stats = [
+	{ prefix: '', value: 2015, suffix: '', label: 'building software since', count: false },
+	{ prefix: '', value: 100, suffix: 'M+', label: 'downloads on apps our team built' },
+	{ prefix: '$', value: 40, suffix: 'M+', label: 'raised by companies we’ve built for' },
+	{ prefix: '', value: 5, suffix: '', label: 'client companies acquired' },
+	{ prefix: '', value: 44, suffix: '+', label: 'products and AI systems shipped' },
+	{ prefix: '', value: 3, suffix: '', label: 'regions served: the US, the Middle East and Southeast Asia' },
+];
 ---
 
 <Layout title="About | VixeraLabs">
@@ -30,11 +42,17 @@ import aboutHero from '../assets/About.png';
 		</div>
 	</section>
 
-	<Impact>
-		<strong>Vixera Labs is an AI systems consultancy.</strong> We build the agents, automations and products that take
-		repetitive work off your team, from a founder's first MVP to enterprise workflows, while the decisions that matter
-		stay with you.
+	<Impact stats={stats}>
+		<strong>Vixera Labs is an AI automation agency founded in 2015 by Harsh [Surname] and [Brother’s name].</strong>
+		We’ve spent eleven years building software that holds up at scale, long before AI made it easy. Today we build AI
+		systems that run operations for healthcare, finance and public-sector teams.
 	</Impact>
+
+	<OurStory />
+
+	<WhyItMatters />
+
+	<WorkedWith />
 
 	<SelectedWork />
 

@@ -1,0 +1,172 @@
+---
+interface Client {
+	name: string;
+	// Wordmark style, so each name reads like its own logo until real logos are added
+	style: 'heavy' | 'serif' | 'caps' | 'sans' | 'italic' | 'light' | 'bold-serif';
+}
+
+const clients: Client[] = [
+	{ name: 'mckayn', style: 'heavy' },
+	{ name: 'Janitri', style: 'serif' },
+	{ name: 'PulzCAD', style: 'caps' },
+	{ name: 'Dealroom Media', style: 'sans' },
+	{ name: 'Foxtail Studio', style: 'italic' },
+	{ name: 'Postbridge', style: 'light' },
+	{ name: 'Ashva', style: 'bold-serif' },
+	{ name: 'Horse’s Mouth', style: 'sans' },
+];
+---
+
+<div class="trusted">
+	<p class="trusted__label">Trusted by teams at</p>
+	<ul class="trusted__grid">
+		{
+			clients.map((client) => (
+				<li class="trusted__cell">
+					<span class={`trusted__name trusted__name--${client.style}`}>{client.name}</span>
+				</li>
+			))
+		}
+	</ul>
+</div>
+
+<style>
+	.trusted {
+		/* Full content width, so the grid lines up with the intro text and stats below */
+		margin: 0 0 max(128px, calc(128 * var(--u)));
+		font-family: 'Inter', system-ui, sans-serif;
+	}
+
+	.trusted__label {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		text-align: center;
+		color: #5e5e5e;
+	}
+
+	/* Cells draw their right and bottom edges; the grid draws the top and left, so no line doubles up */
+	.trusted__grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		margin: 28px 0 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid #e6e6e6;
+		border-left: 1px solid #e6e6e6;
+	}
+
+	.trusted__cell {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: max(96px, calc(96 * var(--u)));
+		padding: 16px;
+		border-right: 1px solid #e6e6e6;
+		border-bottom: 1px solid #e6e6e6;
+		text-align: center;
+		transition: background-color 0.3s ease;
+	}
+
+	.trusted__name {
+		font-size: max(22px, calc(22 * var(--u)));
+		line-height: 1.2;
+		color: #6b7570;
+		transition:
+			color 0.3s ease,
+			transform 0.3s ease;
+	}
+
+	/* Hovered cell picks up a soft green tint and the name lifts slightly in brand ink */
+	@media (hover: hover) {
+		.trusted__cell:hover {
+			background-color: #f3f8f1;
+		}
+
+		.trusted__cell:hover .trusted__name {
+			color: #0c2b15;
+			transform: translateY(-2px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.trusted__cell,
+		.trusted__name {
+			transition: none;
+		}
+
+		.trusted__cell:hover .trusted__name {
+			transform: none;
+		}
+	}
+
+	.trusted__name--heavy {
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		font-size: max(25px, calc(25 * var(--u)));
+	}
+
+	.trusted__name--serif {
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-weight: 400;
+		font-size: max(25px, calc(25 * var(--u)));
+	}
+
+	.trusted__name--caps {
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		font-size: max(18px, calc(18 * var(--u)));
+	}
+
+	.trusted__name--sans {
+		font-weight: 600;
+		font-size: max(21px, calc(21 * var(--u)));
+	}
+
+	.trusted__name--italic {
+		font-family: 'Lora', Georgia, serif;
+		font-style: italic;
+		font-weight: 400;
+		font-size: max(24px, calc(24 * var(--u)));
+	}
+
+	.trusted__name--light {
+		font-family: 'IBM Plex Sans', system-ui, sans-serif;
+		font-weight: 300;
+		font-size: max(25px, calc(25 * var(--u)));
+	}
+
+	.trusted__name--bold-serif {
+		font-family: 'Lora', Georgia, serif;
+		font-weight: 500;
+		letter-spacing: 0.01em;
+		font-size: max(24px, calc(24 * var(--u)));
+	}
+
+	@media (max-width: 640px) {
+		.trusted {
+			margin-bottom: 72px;
+		}
+
+		.trusted__grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.trusted__cell {
+			min-height: 76px;
+			padding: 12px;
+		}
+
+		.trusted__name {
+			font-size: 18px;
+		}
+
+		.trusted__name--caps {
+			font-size: 14px;
+			letter-spacing: 0.14em;
+		}
+	}
+</style>
