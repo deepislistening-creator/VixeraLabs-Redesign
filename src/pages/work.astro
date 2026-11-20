@@ -9,13 +9,17 @@ import StartupWork from '../components/StartupWork.astro';
 import CtaBanner from '../components/CtaBanner.astro';
 import Footer from '../components/Footer.astro';
 import workHero from '../assets/workNewBg.png';
+import redrank from '../assets/RedrankNew.png';
+import freeShipFast from '../assets/FreeShipFast.png';
 
-// Tinted stand-ins until the product screenshots are added (set `image` + `alt` to swap)
 const products: Company[] = [
 	{
 		name: 'RedRank',
 		stat: { value: '24/7', label: 'Reddit lead discovery', tag: 'Product · AI · SaaS' },
-		tint: 'radial-gradient(120% 90% at 30% 20%, #ffb089 0%, #ff6a2b 45%, #c73a0c 100%)',
+		tint: 'radial-gradient(120% 90% at 20% 15%, #ffb4a8 0%, #f5524a 45%, #b8231d 100%)',
+		screenshot: true,
+		image: redrank,
+		alt: 'RedRank homepage: “Want to add $15k–$50k in new MRR?” with a website input and Find Buyers button',
 		info: {
 			title: 'RedRank',
 			text: 'Find high-intent Reddit leads for your SaaS on autopilot. We built it, we use it, we sell it.',
@@ -26,6 +30,9 @@ const products: Company[] = [
 		name: 'Free Ship Fast',
 		stat: { value: 'Hours', label: 'Idea to production', tag: 'Product · AI · No-code' },
 		tint: 'radial-gradient(120% 90% at 70% 30%, #3a3a3a 0%, #141414 50%, #000000 100%)',
+		screenshot: true,
+		image: freeShipFast,
+		alt: 'Free Ship Fast homepage: “Build Smarter, Launch Faster” beside a code editor and deploy terminal',
 		info: {
 			title: 'Free Ship Fast',
 			text: 'Build and deploy custom AI chatbots with zero code.',

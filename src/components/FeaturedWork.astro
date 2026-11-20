@@ -1,8 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import eclinical from '../assets/eclinicalNew.png';
-import bank from '../assets/bank.png';
+import usGovt from '../assets/USGovt.png';
+import clinical from '../assets/Clinical.png';
+import corporation from '../assets/Corporation.png';
 
 interface Work {
 	title: string;
@@ -13,23 +14,24 @@ interface Work {
 	alt?: string;
 }
 
-// Stand-in photos until the project images are added
 const works: Work[] = [
 	{
 		title: 'US city government — civic technology',
 		text: 'Strategy and technology infrastructure engagement with a major US city government office. Civic tech built for public-sector compliance standards.',
+		image: usGovt,
+		alt: 'City planners reviewing a zoning map on a large screen in a government office',
 	},
 	{
 		title: '$3B+ clinical workflow platform',
 		text: 'Built internal tooling and patient-facing infrastructure for one of the largest clinical workflow companies in the US. Millions of patient records. Zero downtime tolerance.',
-		image: eclinical,
-		alt: 'A pharmacy counter with a computer running dispensing software',
+		image: clinical,
+		alt: 'Two clinicians reviewing a patient schedule on a computer in a hospital ward',
 	},
 	{
 		title: "Southeast Asia's largest credit guarantee corporation",
 		text: 'Engineered financial infrastructure for a government-backed institution managing credit guarantees across an entire region. Compliance-first, scale-first.',
-		image: bank,
-		alt: 'Bank sign on the facade of a glass office building',
+		image: corporation,
+		alt: 'A team reviewing financial charts and documents in an office overlooking a city',
 	},
 ];
 
