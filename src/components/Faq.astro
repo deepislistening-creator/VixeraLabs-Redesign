@@ -161,7 +161,7 @@ const faqs = [
 
 	.trigger {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		gap: 16px;
 		width: 100%;
 		padding: 26px 0;
@@ -190,6 +190,8 @@ const faqs = [
 		flex: none;
 		width: 20px;
 		height: 20px;
+		/* Centre the icon on the first text line (line-height 1.3em) */
+		margin-top: calc((1.3em - 20px) / 2);
 		stroke: currentColor;
 		stroke-width: 1.5;
 		stroke-linecap: round;
