@@ -1,4 +1,6 @@
 ---
+import { services } from '../data/services';
+
 interface Props {
 	// 'light' for pages whose header sits on a dark photo
 	tone?: 'dark' | 'light';
@@ -25,16 +27,49 @@ const links = [
 	<div class="actions">
 		<nav class="nav glass" aria-label="Main">
 			{
-				links.map((link) => (
-					<a class="nav__link" href={link.href} aria-current={
-							// Sub-pages (e.g. /insights/<post>) keep their section highlighted
-							link.href === pathname || (link.href !== '/' && pathname.startsWith(`${link.href}/`))
-								? 'page'
-								: undefined
-						}>
-						{link.label}
-					</a>
-				))
+				links.map((link) => {
+					// Sub-pages (e.g. /insights/<post>) keep their section highlighted
+					const current =
+						link.href === pathname || (link.href !== '/' && pathname.startsWith(`${link.href}/`))
+							? 'page'
+							: undefined;
+
+					if (link.href !== '/services') {
+						return (
+							<a class="nav__link" href={link.href} aria-current={current}>
+								{link.label}
+							</a>
+						);
+					}
+
+					// Services opens a dropdown of the individual service pages on hover / keyboard focus
+					return (
+						<div class="nav__item">
+							<a class="nav__link" href={link.href} aria-current={current} aria-haspopup="true">
+								{link.label}
+								<svg class="nav__chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+									<path d="M3 4.5 6 7.5 9 4.5" />
+								</svg>
+							</a>
+							<div class="menu">
+								<ul class="menu__list">
+									{services.map((service) => (
+										<li>
+											<a
+												class="menu__link"
+												href={`/services/${service.slug}`}
+												aria-current={pathname === `/services/${service.slug}` ? 'page' : undefined}
+											>
+												<span class="menu__name">{service.name}</span>
+												<span class="menu__short">{service.short}</span>
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
+					);
+				})
 			}
 		</nav>
 
@@ -134,6 +169,99 @@ const links = [
 		color: #212427;
 		text-decoration: none;
 		transition: background-color 0.25s ease;
+	}
+
+	/* ---------- Services dropdown ---------- */
+
+	.nav__item {
+		position: relative;
+	}
+
+	.nav__link {
+		gap: 6px;
+	}
+
+	.nav__chevron {
+		width: 12px;
+		height: 12px;
+		stroke: currentColor;
+		stroke-width: 1.6;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		transition: transform 0.25s ease;
+	}
+
+	.nav__item:hover .nav__chevron,
+	.nav__item:focus-within .nav__chevron {
+		transform: rotate(180deg);
+	}
+
+	/* The top padding bridges the gap below the nav, so the pointer can travel into the menu without it closing */
+	.menu {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		padding-top: 22px;
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(-50%, 6px);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			visibility 0s linear 0.2s;
+	}
+
+	.nav__item:hover .menu,
+	.nav__item:focus-within .menu {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, 0);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			visibility 0s;
+	}
+
+	/* Near-opaque instead of glass: a blur nested inside the nav's blur can't see the page behind it */
+	.menu__list {
+		width: 340px;
+		margin: 0;
+		padding: 8px;
+		list-style: none;
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.97);
+		box-shadow: 0 20px 50px rgba(12, 43, 21, 0.16);
+	}
+
+	.menu__link {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		padding: 12px 16px;
+		border-radius: 14px;
+		color: #212427;
+		text-decoration: none;
+		transition: background-color 0.2s ease;
+	}
+
+	.menu__link:hover,
+	.menu__link[aria-current='page'] {
+		background: #e3fddb;
+	}
+
+	.menu__link:focus-visible {
+		outline: 2px solid #212427;
+		outline-offset: -2px;
+	}
+
+	.menu__name {
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.menu__short {
+		font-size: 13px;
+		color: #5e5e5e;
 	}
 
 	.nav__link[aria-current='page'] {

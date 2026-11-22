@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import ServiceStack from '../components/ServiceStack.astro';
 import Faq from '../components/Faq.astro';
 import Footer from '../components/Footer.astro';
 import servicesHero from '../assets/ServicesBg.png';
@@ -32,6 +33,7 @@ const poster = await getImage({ src: servicesHero, width: 1672, format: 'webp' }
 		</div>
 	</section>
 
+	<ServiceStack />
 	<Faq />
 	<Footer />
 </Layout>

@@ -31,7 +31,9 @@ import banner from '../assets/Banner.png';
 	.cta-banner {
 		display: grid;
 		grid-template-columns: 52fr 48fr;
-		height: 573px;
+		/* Min, not fixed: the text scales with --u on wide screens and would overflow a fixed height,
+		   leaving the image column taller than the dark background */
+		min-height: max(573px, calc(573 * var(--u)));
 		background: #0c2b15;
 		color: #ffffff;
 	}
@@ -82,7 +84,7 @@ import banner from '../assets/Banner.png';
 	@media (max-width: 900px) {
 		.cta-banner {
 			grid-template-columns: 1fr;
-			height: auto;
+			min-height: 0;
 		}
 
 		.media {
