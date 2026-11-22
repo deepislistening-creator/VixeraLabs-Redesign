@@ -1,0 +1,113 @@
+---
+import { getImage } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Faq from '../components/Faq.astro';
+import Footer from '../components/Footer.astro';
+import servicesHero from '../assets/ServicesBg.png';
+
+// Static frame shown until the background video starts playing
+const poster = await getImage({ src: servicesHero, width: 1672, format: 'webp' });
+---
+
+<Layout title="Services | VixeraLabs">
+	<section class="services-hero">
+		<video
+			class="services-hero__img"
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="auto"
+			poster={poster.src}
+			aria-hidden="true"
+		>
+			<source src="/assets/vixera-services-hero-background-webNew.mp4" type="video/mp4" />
+		</video>
+		<Header tone="light" />
+
+		<div class="content">
+			<p class="eyebrow">Services</p>
+			<h1 class="heading">AI automation, built<br /><span>around how you work.</span></h1>
+		</div>
+	</section>
+
+	<Faq />
+	<Footer />
+</Layout>
+
+<style>
+	/* Same banner layout as the Insights page; a dark scrim sits over the video, so the heading is white */
+	.services-hero {
+		position: relative;
+		height: 780px;
+		overflow: hidden;
+		display: flex;
+		align-items: flex-end;
+		background: #c9f0b8;
+	}
+
+	.services-hero__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* Dark scrim over the video so the white heading reads clearly */
+	.services-hero::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: rgba(10, 14, 18, 0.55);
+		pointer-events: none;
+	}
+
+	.content {
+		position: relative;
+		z-index: 1;
+		/* Keep this box off the header's area, or it covers the nav and blocks hover/clicks */
+		padding: 0 50px 80px;
+	}
+
+	.eyebrow {
+		margin: 0 0 16px;
+		font-family: 'Inter', system-ui, sans-serif;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.heading {
+		margin: 0;
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: max(62px, calc(62 * var(--u)));
+		font-weight: 400;
+		line-height: 1.05;
+		letter-spacing: -0.01em;
+		color: #fff;
+		text-wrap: balance;
+	}
+
+	/* Muted second line */
+	.heading span {
+		color: rgba(255, 255, 255, 0.65);
+	}
+
+	@media (max-width: 768px) {
+		.services-hero {
+			height: 640px;
+		}
+
+		.content {
+			padding: 0 16px 56px;
+		}
+
+		.heading {
+			font-size: clamp(36px, 9vw, 62px);
+		}
+	}
+</style>

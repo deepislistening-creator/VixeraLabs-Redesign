@@ -6,6 +6,8 @@ import janitriFounder from '../assets/founders/JanitriFounder.png';
 import pulzcadFounder from '../assets/founders/PulzCadFounder.png';
 import mckaynFounder from '../assets/founders/MckaynFounder.png';
 import dealroomFounder from '../assets/founders/DealroomFounder.png';
+import horsesMouthFounder from '../assets/founders/HorsesMouthFounder.png';
+import ashvaFounder from '../assets/founders/AshvaFounder.png';
 
 interface Project {
 	name: string;
@@ -20,11 +22,13 @@ interface Project {
 	href?: string;
 	image?: ImageMetadata;
 	alt?: string;
+	// CSS object-position, to keep faces in frame when the image is cropped
+	focus?: string;
 	// Shown until a screenshot is added, and behind it while it loads
 	placeholder: string;
 }
 
-// Live product links and screenshots still to be added
+// Live product links still to be added
 const projects: Project[] = [
 	{
 		name: 'Janitri',
@@ -35,6 +39,9 @@ const projects: Project[] = [
 			'We needed someone who could build fast without cutting corners. Harsh shipped our entire platform in 3 weeks — and it helped us raise our next round.',
 		founder: 'Founder, Janitri',
 		avatar: janitriFounder,
+		image: janitriFounder,
+		alt: 'Portrait of the founder of Janitri',
+		focus: 'center 20%',
 		href: '#',
 		placeholder: 'linear-gradient(160deg, #efe4ff 0%, #f9d9e4 55%, #f3b8c8 100%)',
 	},
@@ -47,6 +54,9 @@ const projects: Project[] = [
 			'They understood the clinical side of cardiac diagnostics from day one — what they built was acquisition-ready.',
 		founder: 'Founder, PulzCAD',
 		avatar: pulzcadFounder,
+		image: pulzcadFounder,
+		alt: 'Portrait of the founder of PulzCAD',
+		focus: 'center 20%',
 		href: '#',
 		placeholder: 'linear-gradient(160deg, #0f3b3a 0%, #0a2827 55%, #3fd6c6 160%)',
 	},
@@ -58,6 +68,9 @@ const projects: Project[] = [
 		quote: 'They turned our performance data into a platform our clients could actually trust — and shipped it fast.',
 		founder: 'Founder, Mckayn',
 		avatar: mckaynFounder,
+		image: mckaynFounder,
+		alt: 'Portrait of the founder of Mckayn',
+		focus: 'center 20%',
 		href: '#',
 		placeholder: 'linear-gradient(160deg, #ffffff 0%, #e6f7df 55%, #7fd46a 140%)',
 	},
@@ -69,6 +82,9 @@ const projects: Project[] = [
 		quote: 'They understood how B2B content actually converts and built exactly the engine we needed.',
 		founder: 'Founder, Dealroom Media',
 		avatar: dealroomFounder,
+		image: dealroomFounder,
+		alt: 'Portrait of the founder of Dealroom Media',
+		focus: 'center 20%',
 		href: '#',
 		placeholder: 'linear-gradient(160deg, #000000 0%, #0a1a3a 55%, #2f7bff 150%)',
 	},
@@ -79,6 +95,10 @@ const projects: Project[] = [
 		text: 'Career mentorship connecting students with professionals.',
 		quote: 'Most agencies disappear after launch. Harsh stayed until we were stable.',
 		founder: "Founder, Horse's Mouth",
+		avatar: horsesMouthFounder,
+		image: horsesMouthFounder,
+		alt: "Portrait of the founder of Horse's Mouth",
+		focus: '45% 20%',
 		placeholder: 'linear-gradient(160deg, #5b3d9e 0%, #6f4bbf 55%, #8c7ad6 100%)',
 	},
 	{
@@ -88,10 +108,24 @@ const projects: Project[] = [
 		text: 'AI-enabled wearable devices for objective physiotherapy and musculoskeletal assessment.',
 		quote: "They built for a clinical niche they'd never touched — and got the physiotherapy workflows exactly right.",
 		founder: 'Founder, Ashva',
+		avatar: ashvaFounder,
+		image: ashvaFounder,
+		alt: 'Portrait of the founder of Ashva',
+		focus: '38% 20%',
 		href: '#',
 		placeholder: 'linear-gradient(160deg, #0a0a0a 0%, #2a1a08 60%, #f08a12 150%)',
 	},
 ];
+
+/*
+ * On desktop the photo covers the whole card (roughly 3:4), so a landscape photo is scaled to the card's
+ * height and rendered wider than the card. Scale `sizes` by that overflow so the browser picks a sharp file.
+ */
+const CARD_RATIO = 3 / 4;
+const sizesFor = (image: ImageMetadata) => {
+	const k = Math.max(1, image.width / image.height / CARD_RATIO).toFixed(2);
+	return `(max-width: 640px) 100vw, (max-width: 1100px) calc(50vw * ${k}), calc(33vw * ${k})`;
+};
 ---
 
 <section class="startups" aria-labelledby="startups-title">
@@ -113,11 +147,12 @@ const projects: Project[] = [
 							<Image
 								src={item.image}
 								alt={item.alt ?? ''}
-								widths={[480, 720, 960]}
-								sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
+								widths={[480, 720, 960, 1280, 1600, 2000, 2400]}
+								sizes={sizesFor(item.image)}
 								format="webp"
 								loading="lazy"
 								class="card__img"
+								style={item.focus ? `object-position:${item.focus}` : undefined}
 							/>
 						)}
 					</div>

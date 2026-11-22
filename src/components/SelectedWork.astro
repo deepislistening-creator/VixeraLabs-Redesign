@@ -7,7 +7,7 @@ interface Project {
 	featured?: boolean;
 }
 
-// Images are still to come; each card shows a blank media area until then
+// Images are still to come; each row shows a blank media area until then
 const projects: Project[] = [
 	{
 		category: 'Mobile game development',
@@ -37,27 +37,34 @@ const projects: Project[] = [
 		</p>
 	</div>
 
-	<ul class="cards">
+	<ol class="panels">
 		{
-			projects.map((item) => (
-				<li class:list={['card', { 'card--featured': item.featured }]}>
-					<div class="card__media" aria-hidden="true" />
+			projects.map((item, i) => (
+				<li class:list={['panel', { 'panel--featured': item.featured }]} tabindex="0">
+					<div class="panel__media" aria-hidden="true" />
 
-					<div class="card__body">
-						<p class="card__category">{item.category}</p>
-						{item.title && <h3 class="card__title">{item.title}</h3>}
-						<p class="card__text">{item.text}</p>
-						{item.rating && (
-							<span class="card__rating">
-								{item.rating}
-								<span aria-hidden="true">★</span> Rating
-							</span>
-						)}
+					<span class="panel__index">{String(i + 1).padStart(2, '0')}</span>
+
+					<div class="panel__body">
+						<p class="panel__category">{item.category}</p>
+
+						<div class="panel__details">
+							{/* Projects without a name use their one-liner as the headline */}
+							<h3 class="panel__title">{item.title ?? item.text}</h3>
+							{item.title && <p class="panel__text">{item.text}</p>}
+
+							{item.rating && (
+								<span class="panel__rating">
+									{item.rating}
+									<span aria-hidden="true">★</span> Rating
+								</span>
+							)}
+						</div>
 					</div>
 				</li>
 			))
 		}
-	</ul>
+	</ol>
 
 	<a class="more" href="/work">
 		Explore all work
@@ -104,87 +111,158 @@ const projects: Project[] = [
 		color: #5e5e5e;
 	}
 
-	/* ---------- cards: one tall featured card on the left, two stacked on the right ---------- */
+	/* ---------- expanding panels: the open panel grows, the others shrink to slim columns ---------- */
 
-	.cards {
-		display: grid;
-		grid-template-columns: 1.35fr 1fr;
-		grid-template-rows: 1fr 1fr;
-		gap: 16px;
-		margin: 40px 0 0;
+	.panels {
+		display: flex;
+		gap: 12px;
+		height: max(560px, calc(560 * var(--u)));
+		margin: max(48px, calc(48 * var(--u))) 0 0;
 		padding: 0;
 		list-style: none;
 	}
 
-	.card {
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-		border: 1px solid rgba(12, 43, 21, 0.08);
-		border-radius: 12px;
-		background: #ffffff;
-	}
-
-	.card--featured {
-		grid-row: span 2;
-	}
-
-	/* Blank until the project images are added */
-	.card__media {
+	.panel {
+		position: relative;
 		flex: 1;
-		min-height: 220px;
-		background: #e6e2dd;
+		min-width: 0;
+		overflow: hidden;
+		border-radius: 18px;
+		background: #0c2b15;
+		color: #ffffff;
+		cursor: pointer;
+		outline: none;
+		transition: flex 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 
-	.card--featured .card__media {
-		min-height: 420px;
+	/* The featured panel is open by default; hovering or focusing another one opens it instead */
+	.panel--featured,
+	.panels:hover .panel:hover,
+	.panels:focus-within .panel:focus {
+		flex: 3.2;
 	}
 
-	.card__body {
-		padding: 20px;
+	.panels:hover .panel:not(:hover),
+	.panels:focus-within .panel:not(:focus) {
+		flex: 1;
 	}
 
-	.card--featured .card__body {
-		padding: 24px 20px;
+	.panel:focus-visible {
+		box-shadow: 0 0 0 3px #f1eeea, 0 0 0 5px #2f6b25;
 	}
 
-	.card__category {
+	/* Placeholder art until the project images are added; a dark fade keeps the text legible */
+	.panel__media {
+		position: absolute;
+		inset: 0;
+		background:
+			radial-gradient(120% 80% at 80% 10%, rgba(120, 190, 90, 0.35), transparent 60%),
+			linear-gradient(160deg, #1d4a26 0%, #0c2b15 70%);
+		transition: transform 0.8s ease;
+	}
+
+	.panel:nth-child(2) .panel__media {
+		background:
+			radial-gradient(120% 80% at 20% 0%, rgba(200, 220, 160, 0.28), transparent 60%),
+			linear-gradient(160deg, #2a3d2c 0%, #111c14 70%);
+	}
+
+	.panel:nth-child(3) .panel__media {
+		background:
+			radial-gradient(120% 80% at 70% 100%, rgba(140, 200, 120, 0.3), transparent 60%),
+			linear-gradient(200deg, #163a20 0%, #0a1f10 70%);
+	}
+
+	.panel__media::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, transparent 35%, rgba(6, 18, 9, 0.75) 100%);
+	}
+
+	.panel:hover .panel__media {
+		transform: scale(1.04);
+	}
+
+	.panel__index {
+		position: absolute;
+		top: 26px;
+		left: 28px;
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: 18px;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.panel__body {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		padding: 28px;
+	}
+
+	.panel__category {
 		margin: 0;
 		font-size: 12px;
 		font-weight: 600;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
-		color: #0c2b15;
+		color: rgba(255, 255, 255, 0.85);
 	}
 
-	.card__title {
+	/* Details only show on the open panel; fixed width so text doesn't reflow while it grows */
+	.panel__details {
+		width: max(440px, calc(440 * var(--u)));
+		max-width: 100%;
+		max-height: 0;
+		overflow: hidden;
+		opacity: 0;
+		transform: translateY(12px);
+		transition:
+			opacity 0.3s ease,
+			transform 0.4s ease,
+			max-height 0.4s ease;
+	}
+
+	.panel--featured .panel__details,
+	.panels:hover .panel:hover .panel__details,
+	.panels:focus-within .panel:focus .panel__details {
+		max-height: 320px;
+		opacity: 1;
+		transform: none;
+		transition-delay: 0.15s;
+	}
+
+	.panels:hover .panel:not(:hover) .panel__details,
+	.panels:focus-within .panel:not(:focus) .panel__details {
+		max-height: 0;
+		opacity: 0;
+		transform: translateY(12px);
+		transition-delay: 0s;
+	}
+
+	.panel__title {
 		margin: 14px 0 0;
-		font-size: max(28px, calc(28 * var(--u)));
+		font-family: 'Source Serif 4', Georgia, serif;
+		font-size: max(38px, calc(38 * var(--u)));
 		font-weight: 400;
-		line-height: 1.2;
-		letter-spacing: 0.01em;
-		text-transform: uppercase;
-		color: #111111;
+		line-height: 1.12;
+		letter-spacing: -0.01em;
+		color: #ffffff;
 	}
 
-	.card__text {
-		margin: 10px 0 0;
-		font-size: 15px;
-		font-weight: 400;
-		line-height: 1.5;
-		color: #313131;
+	.panel__text {
+		margin: 12px 0 0;
+		font-size: 16px;
+		line-height: 1.55;
+		color: rgba(255, 255, 255, 0.75);
 	}
 
-	.card--featured .card__text {
-		margin-top: 14px;
-		color: #5e5e5e;
-	}
-
-	.card__rating {
+	.panel__rating {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
-		margin-top: 18px;
+		margin-top: 20px;
 		padding: 8px 16px;
 		border-radius: 8px;
 		background: #e3fddb;
@@ -220,18 +298,24 @@ const projects: Project[] = [
 
 	/* ---------- responsive ---------- */
 
+	/* No hover on touch screens: stack the panels and show every panel's details */
 	@media (max-width: 900px) {
-		.cards {
-			grid-template-columns: 1fr;
-			grid-template-rows: none;
+		.panels {
+			flex-direction: column;
+			height: auto;
 		}
 
-		.card--featured {
-			grid-row: auto;
+		/* !important beats the hover/focus rules above, which a tap would otherwise trigger */
+		.panel {
+			flex: none !important;
+			min-height: 340px;
 		}
 
-		.card--featured .card__media {
-			min-height: 320px;
+		.panel__details {
+			width: auto;
+			max-height: none !important;
+			opacity: 1 !important;
+			transform: none !important;
 		}
 	}
 
@@ -250,8 +334,12 @@ const projects: Project[] = [
 			display: none;
 		}
 
-		.card__title {
-			font-size: 24px;
+		.panel {
+			min-height: 300px;
+		}
+
+		.panel__title {
+			font-size: 28px;
 		}
 	}
 </style>

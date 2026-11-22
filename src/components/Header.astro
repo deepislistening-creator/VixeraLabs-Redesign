@@ -6,14 +6,11 @@ interface Props {
 
 const { tone = 'dark' } = Astro.props;
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isHome = pathname === '/';
-// Section anchors live on the home page, so prefix them with "/" elsewhere
-const section = (hash: string) => (isHome ? hash : `/${hash}`);
 
 const links = [
 	{ label: 'Home', href: '/' },
 	{ label: 'About', href: '/about' },
-	{ label: 'Services', href: section('#service') },
+	{ label: 'Services', href: '/services' },
 	{ label: 'Work', href: '/work' },
 	{ label: 'Insights', href: '/insights' },
 ];
