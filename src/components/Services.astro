@@ -1,0 +1,466 @@
+---
+import ArrowButton from './ArrowButton.astro';
+import InsideVixera from './InsideVixera.astro';
+import FounderMock from './mocks/FounderMock.astro';
+import BrandMock from './mocks/BrandMock.astro';
+import OutreachMock from './mocks/OutreachMock.astro';
+import CustomMock from './mocks/CustomMock.astro';
+
+interface Service {
+	id: string;
+	name: string;
+	tagline: string;
+	headline: string;
+	summary: string;
+	// Why we sell it, or the proof behind it
+	why: string;
+	benefits: string[];
+	// Full page for this service (not built yet)
+	href: string;
+	// Read out by screen readers in place of the animated mockup
+	visualLabel: string;
+	Mock: typeof FounderMock;
+}
+
+const services: Service[] = [
+	{
+		id: 'founder-os',
+		name: 'Founder OS',
+		tagline: 'Your AI chief of staff',
+		headline: 'Stop being the bottleneck in your own company.',
+		summary:
+			'Founder OS reads your inbox, calendar, calls and Slack, and turns them into one plan for your day.',
+		why: 'We built it to run our own companies, and it still does, every day.',
+		benefits: [
+			'A morning brief: what needs you today, and what can wait',
+			'Prep before every meeting, and notes and tasks after it',
+			'Follow-ups drafted in your voice, on the same day',
+			'Every promise tracked, yours and theirs',
+		],
+		href: '/services/founder-os',
+		visualLabel:
+			'Example: Founder OS posts a morning brief in Slack with today’s priorities, meeting prep and drafted follow-ups.',
+		Mock: FounderMock,
+	},
+	{
+		id: 'brand-os',
+		name: 'Brand OS',
+		tagline: 'Every conversation about you, your competitors and your market',
+		headline: 'Someone is asking for a product like yours right now.',
+		summary:
+			'Brand OS watches Reddit, X and LinkedIn for your brand, your competitors and people looking for what you sell, then drafts your reply.',
+		why: 'We use it to find our own clients.',
+		benefits: [
+			'Know when anyone mentions you, tagged or not',
+			'Show up when people complain about a competitor',
+			'Find “can anyone recommend…” posts within minutes',
+			'Replies drafted in your voice, and nothing posts without you',
+		],
+		href: '/services/brand-os',
+		visualLabel:
+			'Example: Brand OS spots a Reddit post asking for a product recommendation, flags it as buying intent and drafts a reply for approval.',
+		Mock: BrandMock,
+	},
+	{
+		id: 'outreach-os',
+		name: 'Outreach OS',
+		tagline: 'An AI sales rep for LinkedIn and email',
+		headline: 'Reach people the week they’re ready to buy.',
+		summary:
+			'Outreach OS spots buying signals on LinkedIn, researches each lead and writes the first message for you.',
+		why: 'We book our own sales calls with it.',
+		benefits: [
+			'Leads that come with a reason: a new job, funding or hiring',
+			'Every lead researched, and every message written for that person',
+			'LinkedIn and email follow-ups until they reply',
+			'Meetings booked straight onto your calendar',
+		],
+		href: '/services/outreach-os',
+		visualLabel:
+			'Example: Outreach OS sees a job change, researches the lead, sends a personal LinkedIn message and books the call when they reply.',
+		Mock: OutreachMock,
+	},
+	{
+		id: 'custom-os',
+		name: 'Custom OS',
+		tagline: 'For the work only your business does',
+		headline: 'If your team does it the same way every time, AI can do it.',
+		summary:
+			'We build AI around your SOPs. It reads documents, updates your systems and makes routine decisions inside the tools you already use.',
+		why: 'Built for a $1B-revenue healthcare software company and Southeast Asia’s largest credit guarantee corporation.',
+		benefits: [
+			'Handles emails, PDFs and scans, not just clean data',
+			'Makes routine decisions and sends exceptions to a person',
+			'Fixed price and go-live date, agreed before we start',
+			'Live in 2–6 weeks, and you own all of it',
+		],
+		href: '/services/custom-os',
+		visualLabel:
+			'Example: Custom OS reads a loan application PDF, checks each field, approves it and sends an unusual one to a person for review.',
+		Mock: CustomMock,
+	},
+];
+---
+
+<section class="services" id="service" aria-labelledby="services-title">
+	<div class="head">
+		<p class="eyebrow">Services</p>
+		<h2 class="title" id="services-title">
+			We run four companies on these systems. Now we install them in yours.
+		</h2>
+		<p class="subtitle">
+			Each one connects to the tools you already use, runs on your own accounts and keeps working after we hand it
+			over. Need something none of them cover? We build that too.
+		</p>
+	</div>
+
+	<InsideVixera />
+
+	<ol class="list">
+		{
+			services.map(({ Mock, ...service }, i) => (
+				<li class:list={['svc', { 'svc--flip': i % 2 === 1 }]} id={service.id}>
+					<div class="svc__visual" role="img" aria-label={service.visualLabel} data-mock>
+						<Mock />
+					</div>
+
+					<div class="svc__text">
+						<p class="svc__eyebrow">
+							<span class="svc__num">{String(i + 1).padStart(2, '0')}</span>
+							{service.name}
+						</p>
+						<p class="svc__tagline">{service.tagline}</p>
+						<h3 class="svc__headline">{service.headline}</h3>
+						<p class="svc__summary">{service.summary}</p>
+						<p class="svc__why">{service.why}</p>
+
+						<ul class="svc__benefits">
+							{service.benefits.map((benefit) => (
+								<li>
+									<span class="svc__check" aria-hidden="true">
+										<svg viewBox="0 0 12 12" fill="none">
+											<path
+												d="M2.5 6.2 5 8.5l4.5-5"
+												stroke="currentColor"
+												stroke-width="1.8"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</span>
+									{benefit}
+								</li>
+							))}
+						</ul>
+
+						<div class="svc__cta">
+							<ArrowButton href={service.href} label={`Explore ${service.name}`} />
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+</section>
+
+<style>
+	.services {
+		--pad: max(60px, calc(60 * var(--u)));
+		padding: max(100px, calc(100 * var(--u))) var(--pad);
+		background: #ffffff;
+		font-family: 'Inter', system-ui, sans-serif;
+		color: #0c2b15;
+	}
+
+	/* ---------- heading: same treatment as the FAQ and Principles sections ---------- */
+
+	.head {
+		max-width: max(900px, calc(900 * var(--u)));
+	}
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.title {
+		margin: 12px 0 0;
+		font-size: max(44px, calc(44 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+		text-wrap: balance;
+	}
+
+	.subtitle {
+		max-width: 640px;
+		margin: 16px 0 0;
+		font-size: 17px;
+		font-weight: 300;
+		line-height: 1.5;
+		color: #5e5e5e;
+	}
+
+	/* ---------- service cards ---------- */
+
+	.list {
+		display: grid;
+		gap: max(28px, calc(28 * var(--u)));
+		/* Same gap as between cards, so the Inside Vixera panel reads as the first item */
+		margin: max(28px, calc(28 * var(--u))) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.svc {
+		display: grid;
+		grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+		gap: 16px;
+		padding: 16px;
+		border-radius: 28px;
+		background: #f3f6f2;
+		scroll-margin-top: 120px;
+	}
+
+	/* Every other card puts the visual on the right, so the list doesn't feel repetitive */
+	.svc--flip .svc__visual {
+		order: 2;
+	}
+
+	.svc__visual {
+		display: grid;
+		place-items: center;
+		min-height: max(540px, calc(540 * var(--u)));
+		padding: 48px 36px;
+		overflow: hidden;
+		border-radius: 20px;
+		background:
+			radial-gradient(90% 70% at 85% 0%, rgba(150, 248, 120, 0.28) 0%, rgba(150, 248, 120, 0) 60%),
+			radial-gradient(70% 60% at 0% 100%, rgba(61, 220, 107, 0.18) 0%, rgba(61, 220, 107, 0) 60%),
+			#0c2b15;
+	}
+
+	.svc__text {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		padding: max(40px, calc(40 * var(--u))) max(40px, calc(48 * var(--u)));
+	}
+
+	.svc__eyebrow {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin: 0;
+		font-size: 13px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.svc__num {
+		display: grid;
+		place-items: center;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		background: #0c2b15;
+		font-size: 11px;
+		letter-spacing: 0;
+		color: #96f878;
+	}
+
+	.svc__tagline {
+		margin: 10px 0 0;
+		font-size: 15px;
+		color: #5e5e5e;
+	}
+
+	.svc__headline {
+		margin: 20px 0 0;
+		font-size: max(34px, calc(34 * var(--u)));
+		font-weight: 400;
+		line-height: 1.15;
+		letter-spacing: -0.02em;
+		color: #111111;
+		text-wrap: balance;
+	}
+
+	.svc__summary {
+		margin: 16px 0 0;
+		font-size: max(17px, calc(17 * var(--u)));
+		line-height: 1.55;
+		color: #313131;
+		text-wrap: pretty;
+	}
+
+	.svc__why {
+		margin: 18px 0 0;
+		padding-left: 14px;
+		border-left: 3px solid #96f878;
+		font-family: 'Lora', Georgia, serif;
+		font-size: max(17px, calc(17 * var(--u)));
+		font-style: italic;
+		line-height: 1.5;
+		color: #0c2b15;
+	}
+
+	.svc__benefits {
+		display: grid;
+		gap: 12px;
+		margin: 26px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.svc__benefits li {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		font-size: max(16px, calc(16 * var(--u)));
+		line-height: 1.45;
+		color: #1f241f;
+	}
+
+	.svc__check {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 22px;
+		height: 22px;
+		margin-top: 1px;
+		border-radius: 50%;
+		background: #96f878;
+		color: #0c2b15;
+	}
+
+	.svc__check svg {
+		width: 12px;
+		height: 12px;
+	}
+
+	.svc__cta {
+		margin-top: 32px;
+	}
+
+	/*
+	 * Mockup animation: each step in a mockup has data-at (ms to appear) and maybe data-until (ms to hide).
+	 * The script below adds .is-ready to a mockup, which hides its steps, then adds .on to each on cue.
+	 * Without the script (or with reduced motion) the finished state shows and the in-between bits stay hidden.
+	 */
+	.services :global([data-at]),
+	.services :global([data-until]) {
+		transition:
+			opacity 0.45s ease,
+			transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	.services :global([data-until]) {
+		opacity: 0;
+	}
+
+	.services :global(.is-ready [data-at]) {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+
+	.services :global([data-at].on),
+	.services :global([data-until].on) {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 1000px) {
+		.svc {
+			grid-template-columns: 1fr;
+		}
+
+		.svc--flip .svc__visual {
+			order: 0;
+		}
+
+		.svc__visual {
+			min-height: 0;
+		}
+
+		.svc__text {
+			padding: 28px 16px 20px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.services {
+			--pad: 16px;
+			padding-top: 72px;
+			padding-bottom: 72px;
+		}
+
+		.title {
+			font-size: clamp(32px, 8.5vw, 44px);
+		}
+
+		.svc {
+			padding: 10px;
+			border-radius: 22px;
+		}
+
+		.svc__visual {
+			padding: 32px 14px;
+			border-radius: 16px;
+		}
+
+		.svc__text {
+			padding: 24px 10px 14px;
+		}
+
+		.svc__headline {
+			font-size: clamp(26px, 7vw, 34px);
+		}
+	}
+</style>
+
+<script>
+	// Plays each mockup's steps on cue while its card is on screen, then loops
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (!reduceMotion) {
+		for (const mock of document.querySelectorAll<HTMLElement>('[data-mock]')) {
+			const steps = [...mock.querySelectorAll<HTMLElement>('[data-at], [data-until]')];
+			const lastStep = Math.max(...steps.map((el) => Number(el.dataset.at ?? 0)));
+			let timers: number[] = [];
+
+			const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
+			const stop = () => {
+				timers.forEach((id) => clearTimeout(id));
+				timers = [];
+			};
+
+			const play = () => {
+				stop();
+				steps.forEach((el) => el.classList.remove('on'));
+
+				// Let the reset fade out, then run the steps
+				later(() => {
+					for (const el of steps) {
+						later(() => el.classList.add('on'), Number(el.dataset.at ?? 0));
+						if (el.dataset.until) later(() => el.classList.remove('on'), Number(el.dataset.until));
+					}
+					// Hold the finished state for a few seconds before looping
+					later(play, lastStep + 3500);
+				}, 500);
+			};
+
+			mock.classList.add('is-ready');
+			new IntersectionObserver(([entry]) => (entry.isIntersecting ? play() : stop()), { threshold: 0.3 }).observe(
+				mock,
+			);
+		}
+	}
+</script>

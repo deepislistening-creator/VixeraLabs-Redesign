@@ -1,0 +1,212 @@
+---
+import MockWindow from './MockWindow.astro';
+
+// Steps appear at `data-at` ms; Services.astro plays them while the card is on screen
+---
+
+<div class="outreach">
+	<MockWindow title="Outreach OS · Pipeline">
+		<ol class="flow">
+			<li class="row row--signal" data-at="200">
+				<span class="icon icon--signal">
+					<svg viewBox="0 0 12 12" fill="currentColor"><path d="M7 .8 2 7h3.2L4.6 11.2 10 4.8H6.6L7 .8Z" /></svg>
+				</span>
+				<div>
+					<p class="label">Signal · Job change</p>
+					<p class="line"><strong>Sarah Chen</strong> is now Head of Ops at Northwind</p>
+				</div>
+			</li>
+
+			<li class="row" data-at="1100">
+				<span class="avatar">SC</span>
+				<div>
+					<p class="line"><strong>Sarah Chen</strong></p>
+					<p class="muted">Head of Ops · Northwind</p>
+					<p class="chips">
+						<span>120 people</span>
+						<span>Series A</span>
+						<span class="chips__ok">✓ Email verified</span>
+					</p>
+				</div>
+			</li>
+
+			<li class="bubble bubble--out" data-at="2100">
+				<p class="label">LinkedIn · 9:02 AM</p>
+				<p>
+					Hi Sarah, congrats on the new role at Northwind. Most ops leads I talk to spend their first month
+					untangling handoffs…
+				</p>
+			</li>
+
+			<li class="bubble bubble--in" data-at="3400">
+				<p>Funny timing, that's exactly my week. Thursday?</p>
+			</li>
+
+			<li class="row row--booked" data-at="4400">
+				<span class="icon">
+					<svg viewBox="0 0 12 12" fill="none">
+						<rect x="1.5" y="2.5" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+						<path d="M1.5 5h9M4 1.2v2.4M8 1.2v2.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+					</svg>
+				</span>
+				<p class="line"><strong>Thu, 2:00 PM</strong> · Intro call with Sarah</p>
+				<span class="pill">Booked</span>
+			</li>
+		</ol>
+	</MockWindow>
+</div>
+
+<style>
+	.outreach {
+		width: 100%;
+		max-width: 460px;
+	}
+
+	.flow {
+		display: grid;
+		gap: 10px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 10px 12px;
+		border-radius: 10px;
+		background: #f5f7f4;
+		font-size: 13px;
+		line-height: 1.4;
+		color: #3b403a;
+	}
+
+	.row strong {
+		font-weight: 600;
+		color: #111111;
+	}
+
+	.row--signal {
+		background: #fff6e5;
+	}
+
+	.row--booked {
+		background: #e8fbe2;
+	}
+
+	.row--booked .line {
+		flex: 1;
+	}
+
+	.icon {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		background: #96f878;
+		color: #0c2b15;
+	}
+
+	.icon svg {
+		width: 13px;
+		height: 13px;
+	}
+
+	.icon--signal {
+		background: #ffb020;
+		color: #ffffff;
+	}
+
+	.label {
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #8a6a1c;
+	}
+
+	.avatar {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		background: #e3fddb;
+		font-size: 12px;
+		font-weight: 700;
+		color: #0c2b15;
+	}
+
+	.muted {
+		font-size: 12px;
+		color: #7a8079;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+		margin-top: 6px;
+	}
+
+	.chips span {
+		padding: 2px 7px;
+		border: 1px solid #e3e6e1;
+		border-radius: 5px;
+		background: #ffffff;
+		font-size: 10.5px;
+		font-weight: 500;
+		color: #4b514a;
+	}
+
+	.chips .chips__ok {
+		border-color: transparent;
+		background: #e8fbe2;
+		color: #1d6b33;
+	}
+
+	.bubble {
+		max-width: 84%;
+		padding: 10px 12px;
+		border-radius: 14px;
+		font-size: 13px;
+		line-height: 1.45;
+	}
+
+	.bubble--out {
+		justify-self: end;
+		border-bottom-right-radius: 4px;
+		background: #0c2b15;
+		color: #f1fdec;
+	}
+
+	.bubble--out .label {
+		margin-bottom: 4px;
+		color: #96f878;
+	}
+
+	.bubble--in {
+		justify-self: start;
+		border-bottom-left-radius: 4px;
+		background: #eef0ec;
+		color: #1a1d1a;
+	}
+
+	.pill {
+		flex: none;
+		padding: 3px 9px;
+		border-radius: 999px;
+		background: #0c2b15;
+		font-size: 11px;
+		font-weight: 600;
+		color: #96f878;
+	}
+</style>

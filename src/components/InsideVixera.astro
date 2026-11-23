@@ -1,0 +1,471 @@
+---
+// Proof panel for the Services section: how Vixera itself runs on these systems.
+// Numbers and names come from the founder. The agent names are placeholders built from
+// what each system does on the cards below; swap in the real 12.
+
+const companies = [
+	{ name: 'Vixera Labs' },
+	{ name: 'Vixera Studio' },
+	{ name: 'Vixera Marketing' },
+	{ name: 'Redrank', note: 'SaaS' },
+];
+
+const typicalTeam = 100;
+const people = 5;
+
+const teams = [
+	{ num: '01', os: 'Founder OS', agents: ['Chief of staff', 'Meeting notes', 'Inbox triage', 'Follow-ups'] },
+	{ num: '02', os: 'Brand OS', agents: ['Mention tracker', 'Intent scorer', 'Reply drafter', 'Competitor watch'] },
+	{ num: '03', os: 'Outreach OS', agents: ['Signal tracker', 'Lead researcher', 'Message writer', 'Meeting booker'] },
+];
+
+const agentCount = teams.reduce((sum, team) => sum + team.agents.length, 0);
+
+// Reveal timing in ms: the typical team fills in first, then ours, then the agent list
+const typicalStep = 8;
+const oursStart = typicalTeam * typicalStep + 250;
+const oursStep = 70;
+const listStart = oursStart + (people + agentCount) * oursStep + 200;
+---
+
+<div class="inside">
+	<div class="intro">
+		<p class="eyebrow">Inside Vixera</p>
+		<h3 class="headline">
+			<span><em>$12M+</em> in sales.</span>
+			<span><em>{people}</em> people.</span>
+			<span><em>{agentCount}</em> AI agents.</span>
+		</h3>
+		<p class="body">
+			That’s across our four companies, doing the work a 100+ person team normally would. Our agents run the
+			meetings, inboxes, follow-ups, brand monitoring and outreach. The five of us make the decisions and look after
+			clients.
+		</p>
+
+		<p class="companies__label">Running on these systems</p>
+		<ul class="companies">
+			{
+				companies.map((company) => (
+					<li>
+						{company.name}
+						{company.note && <span class="companies__note">{company.note}</span>}
+					</li>
+				))
+			}
+		</ul>
+	</div>
+
+	<figure class="team" data-reveal>
+		<figcaption class="sr-only">
+			Team size compared. A typical company with $12M+ in sales has 100+ people. Vixera has {people} people and
+			{agentCount} AI agents.
+		</figcaption>
+
+		<div class="row">
+			<p class="row__label" aria-hidden="true">
+				<span>Typical company at $12M+ in sales</span>
+				<strong>100+ people</strong>
+			</p>
+			<div class="marks" aria-hidden="true">
+				{
+					Array.from({ length: typicalTeam }, (_, i) => (
+						<i class="mark mark--typical" style={`--d:${i * typicalStep}ms`} />
+					))
+				}
+			</div>
+		</div>
+
+		<div class="row">
+			<p class="row__label" aria-hidden="true">
+				<span>Vixera</span>
+				<strong>{people} people + {agentCount} AI agents</strong>
+			</p>
+			<div class="marks" aria-hidden="true">
+				{Array.from({ length: people }, (_, i) => <i class="mark mark--person" style={`--d:${oursStart + i * oursStep}ms`} />)}
+				{
+					Array.from({ length: agentCount }, (_, i) => (
+						<i class="mark mark--agent" style={`--d:${oursStart + (people + i) * oursStep}ms`}>
+							<svg viewBox="0 0 12 12" fill="currentColor">
+								<path d="M6 .8 7.3 4.7 11.2 6 7.3 7.3 6 11.2 4.7 7.3.8 6l3.9-1.3L6 .8Z" />
+							</svg>
+						</i>
+					))
+				}
+			</div>
+		</div>
+
+		<p class="key" aria-hidden="true">
+			<span><i class="mark mark--person"></i>Person</span>
+			<span><i class="mark mark--agent"></i>AI agent</span>
+			<span class="key__note">Each mark is one person or one agent</span>
+		</p>
+
+		<div class="agents">
+			<p class="agents__label">Our {agentCount} agents</p>
+			<ul class="agents__groups">
+				{
+					teams.map((team, g) => (
+						<li class="group" style={`--d:${listStart + g * 150}ms`}>
+							<p class="group__name">
+								<span class="group__num">{team.num}</span>
+								{team.os}
+							</p>
+							<ul class="group__agents">
+								{team.agents.map((agent) => (
+									<li>{agent}</li>
+								))}
+							</ul>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</figure>
+</div>
+
+<style>
+	.inside {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
+		gap: max(48px, calc(64 * var(--u)));
+		align-items: center;
+		margin-top: max(56px, calc(56 * var(--u)));
+		padding: max(48px, calc(64 * var(--u)));
+		border-radius: 28px;
+		background:
+			radial-gradient(80% 90% at 100% 0%, rgba(150, 248, 120, 0.2) 0%, rgba(150, 248, 120, 0) 60%),
+			radial-gradient(60% 70% at 0% 100%, rgba(61, 220, 107, 0.14) 0%, rgba(61, 220, 107, 0) 60%),
+			#0c2b15;
+		color: #ffffff;
+	}
+
+	/* ---------- left: the claim ---------- */
+
+	.eyebrow {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #96f878;
+	}
+
+	.headline {
+		display: grid;
+		margin: 16px 0 0;
+		font-size: max(48px, calc(56 * var(--u)));
+		font-weight: 400;
+		line-height: 1.08;
+		letter-spacing: -0.03em;
+		color: #ffffff;
+	}
+
+	.headline em {
+		font-style: normal;
+		color: #96f878;
+	}
+
+	.body {
+		max-width: 480px;
+		margin: 24px 0 0;
+		font-size: max(17px, calc(17 * var(--u)));
+		font-weight: 300;
+		line-height: 1.55;
+		color: rgba(255, 255, 255, 0.78);
+		text-wrap: pretty;
+	}
+
+	.companies__label {
+		margin: 32px 0 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.55);
+	}
+
+	.companies {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 12px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.companies li {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 14px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 999px;
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.companies__note {
+		padding: 1px 6px;
+		border-radius: 4px;
+		background: #96f878;
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: #0c2b15;
+	}
+
+	/* ---------- right: headcount compared, one mark per person or agent ---------- */
+
+	.team {
+		margin: 0;
+		padding: max(28px, calc(32 * var(--u)));
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 20px;
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	.row + .row {
+		margin-top: 28px;
+	}
+
+	.row__label {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 4px 16px;
+		margin: 0 0 12px;
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.68);
+	}
+
+	.row__label strong {
+		font-size: 15px;
+		font-weight: 600;
+		color: #ffffff;
+	}
+
+	.marks {
+		display: grid;
+		grid-template-columns: repeat(20, minmax(0, 1fr));
+		gap: 6px;
+	}
+
+	.mark {
+		display: block;
+		aspect-ratio: 1;
+		border-radius: 50%;
+	}
+
+	.mark--typical {
+		background: rgba(255, 255, 255, 0.17);
+	}
+
+	.mark--person {
+		background: #f4f7f2;
+	}
+
+	.mark--agent {
+		display: grid;
+		place-items: center;
+		border-radius: 28%;
+		background: #96f878;
+		color: #0c2b15;
+	}
+
+	.mark--agent svg {
+		width: 62%;
+		height: 62%;
+	}
+
+	.key {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 18px;
+		margin: 22px 0 0;
+		padding-top: 18px;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.key span {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.key .mark {
+		width: 12px;
+	}
+
+	.key .key__note {
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.agents {
+		margin-top: 26px;
+	}
+
+	.agents__label {
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.55);
+	}
+
+	.agents__groups {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+		margin: 14px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.group__name {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.group__num {
+		display: grid;
+		place-items: center;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: #96f878;
+		font-size: 10px;
+		color: #0c2b15;
+	}
+
+	.group__agents {
+		display: grid;
+		gap: 6px;
+		margin: 12px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.group__agents li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 13.5px;
+		line-height: 1.3;
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	.group__agents li::before {
+		content: '';
+		flex: none;
+		width: 7px;
+		height: 7px;
+		border-radius: 2px;
+		background: #96f878;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	/*
+	 * Reveal once on scroll: the script adds .is-ready (hides the marks), then .is-in when the chart is on screen.
+	 * Each mark waits for its own --d delay. Without the script, or with reduced motion, it all shows at once.
+	 */
+	.team.is-ready .marks .mark,
+	.team.is-ready .group {
+		opacity: 0;
+	}
+
+	.team.is-ready .marks .mark {
+		transform: scale(0.4);
+	}
+
+	.team.is-ready .group {
+		transform: translateY(6px);
+	}
+
+	.team.is-in .marks .mark,
+	.team.is-in .group {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 0.35s ease,
+			transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+		transition-delay: var(--d);
+	}
+
+	/* ---------- responsive ---------- */
+
+	@media (max-width: 1000px) {
+		.inside {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.inside {
+			gap: 36px;
+			padding: 36px 18px 18px;
+			border-radius: 22px;
+		}
+
+		.headline {
+			font-size: clamp(38px, 11vw, 48px);
+		}
+
+		.team {
+			padding: 20px 16px;
+			border-radius: 16px;
+		}
+
+		.marks {
+			gap: 4px;
+		}
+
+		.agents__groups {
+			grid-template-columns: 1fr;
+			gap: 18px;
+		}
+
+		.group__agents {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px 14px;
+		}
+	}
+</style>
+
+<script>
+	// Reveals the headcount chart once, the first time it scrolls into view
+	const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (!reduceMotion) {
+		for (const chart of document.querySelectorAll<HTMLElement>('[data-reveal]')) {
+			chart.classList.add('is-ready');
+			const observer = new IntersectionObserver(
+				([entry]) => {
+					if (!entry.isIntersecting) return;
+					chart.classList.add('is-in');
+					observer.disconnect();
+				},
+				{ threshold: 0.35 },
+			);
+			observer.observe(chart);
+		}
+	}
+</script>

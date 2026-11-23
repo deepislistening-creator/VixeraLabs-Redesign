@@ -1,0 +1,22 @@
+---
+// Preview of the new Services section. Not linked from anywhere on the site.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Services from '../components/Services.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Services preview | VixeraLabs">
+	<Header />
+	<main class="preview">
+		<Services />
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	/* Clear the fixed header, which the home page hero normally sits under */
+	.preview {
+		padding-top: 90px;
+	}
+</style>
