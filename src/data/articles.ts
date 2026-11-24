@@ -9,6 +9,11 @@ export interface Article {
 	excerpt: string;
 	readTime: string;
 	published?: string;
+	author?: {
+		name: string;
+		linkedin: string;
+		headshot: string;
+	};
 	description?: string;
 	image?: ImageMetadata;
 	alt?: string;
@@ -25,6 +30,11 @@ export const articles: Article[] = [
 		description: 'Learn how to choose an AI automation agency, compare rules-based tools with custom AI, and scope a first workflow with measurable results.',
 		readTime: '6 min read',
 		published: '2026-11-24',
+		author: {
+			name: 'Harsh S',
+			linkedin: 'https://in.linkedin.com/in/harshdeep5inh',
+			headshot: '/images/authors/harsh-s.jpg',
+		},
 		image: blogHero,
 		placeholder: '#0c2b15',
 	},

@@ -17,6 +17,7 @@ interface Props {
 }
 
 const { article } = Astro.props;
+const { author } = article;
 const isAutomationGuide = article.slug === 'how-to-choose-an-ai-automation-agency';
 const canonical = new URL(`/insights/${article.slug}`, 'https://vixeralabs-redesign.vercel.app').href;
 const formattedDate = article.published && new Intl.DateTimeFormat('en', {
@@ -32,6 +33,12 @@ const structuredData = {
 	datePublished: article.published,
 	dateModified: article.published,
 	mainEntityOfPage: canonical,
+	author: author && {
+		'@type': 'Person',
+		name: author.name,
+		url: author.linkedin,
+		image: new URL(author.headshot, canonical).href,
+	},
 	publisher: { '@type': 'Organization', name: 'Vixera Labs', url: new URL('/', canonical).href },
 };
 ---
@@ -85,6 +92,12 @@ const structuredData = {
 	</section>
 
 	<article class="post">
+		{author && (
+			<div class="post-byline">
+				<img src={author.headshot} alt="" width="56" height="56" />
+				<span>By <a href={author.linkedin}>{author.name}</a></span>
+			</div>
+		)}
 		{formattedDate && <p class="post-date">Published <time datetime={article.published}>{formattedDate}</time></p>}
 		<p class="lead">{article.excerpt}</p>
 		{isAutomationGuide && <AutomationAgencyArticle />}
@@ -206,6 +219,26 @@ const structuredData = {
 		outline: 2px solid #ffffff;
 		outline-offset: 3px;
 		border-radius: 4px;
+	}
+
+	.post-byline {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-bottom: 12px;
+		color: #0c2b15;
+	}
+
+	.post-byline img {
+		border-radius: 50%;
+		object-fit: cover;
+		object-position: 55% 30%;
+	}
+
+	.post-byline a {
+		color: inherit;
+		font-weight: 600;
+		text-underline-offset: 3px;
 	}
 
 	.post-date { margin: 0 0 12px; color: #5e5e5e; font-size: 14px; }
