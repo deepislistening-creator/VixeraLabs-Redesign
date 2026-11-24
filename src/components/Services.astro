@@ -6,15 +6,24 @@ import BrandMock from './mocks/BrandMock.astro';
 import OutreachMock from './mocks/OutreachMock.astro';
 import CustomMock from './mocks/CustomMock.astro';
 
+interface AgentGroup {
+	// Who is asking, such as "You ask" or "Your team asks"
+	label: string;
+	// Each agent and what someone asks it in Slack
+	agents: { name: string; ask: string }[];
+}
+
 interface Service {
 	id: string;
 	name: string;
 	tagline: string;
 	headline: string;
-	summary: string;
+	summary?: string;
 	// Why we sell it, or the proof behind it
 	why: string;
-	benefits: string[];
+	// A card lists either its agents, grouped by who asks them (Founder OS), or its benefits
+	agentGroups?: AgentGroup[];
+	benefits?: string[];
 	// Full page for this service (not built yet)
 	href: string;
 	// Read out by screen readers in place of the animated mockup
@@ -26,20 +35,30 @@ const services: Service[] = [
 	{
 		id: 'founder-os',
 		name: 'Founder OS',
-		tagline: 'Your AI chief of staff',
-		headline: 'Stop being the bottleneck in your own company.',
-		summary:
-			'Founder OS reads your inbox, calendar, calls and Slack, and turns them into one plan for your day.',
+		tagline: 'Beyond the inbox: money, customers and team',
+		headline: 'The questions you and your team keep asking. An agent for each.',
 		why: 'We built it to run our own companies, and it still does, every day.',
-		benefits: [
-			'A morning brief: what needs you today, and what can wait',
-			'Prep before every meeting, and notes and tasks after it',
-			'Follow-ups drafted in your voice, on the same day',
-			'Every promise tracked, yours and theirs',
+		agentGroups: [
+			{
+				label: 'You ask',
+				agents: [
+					{ name: 'Chief of Staff', ask: 'who’s waiting on me?' },
+					{ name: 'Task Manager', ask: 'give this to Sam, due Friday' },
+					{ name: 'Revenue Tracker', ask: 'what came in this week?' },
+				],
+			},
+			{
+				label: 'Your team asks',
+				agents: [
+					{ name: 'Customer Care', ask: 'which customers are waiting longest?' },
+					{ name: 'Payment Recovery', ask: 'has Acme paid yet?' },
+					{ name: 'Meeting Assistant', ask: 'what did we promise Acme?' },
+				],
+			},
 		],
 		href: '/services/founder-os',
 		visualLabel:
-			'Example: Founder OS posts a morning brief in Slack with today’s priorities, meeting prep and drafted follow-ups.',
+			'Example: in Slack, the founder asks Task Manager to give a task to Sam, Sam asks Payment Recovery whether a client has paid, and the founder asks Chief of Staff who is waiting on them. Each agent replies with the result.',
 		Mock: FounderMock,
 	},
 	{
@@ -131,27 +150,47 @@ const services: Service[] = [
 						</p>
 						<p class="svc__tagline">{service.tagline}</p>
 						<h3 class="svc__headline">{service.headline}</h3>
-						<p class="svc__summary">{service.summary}</p>
+						{service.summary && <p class="svc__summary">{service.summary}</p>}
 						<p class="svc__why">{service.why}</p>
 
-						<ul class="svc__benefits">
-							{service.benefits.map((benefit) => (
-								<li>
-									<span class="svc__check" aria-hidden="true">
-										<svg viewBox="0 0 12 12" fill="none">
-											<path
-												d="M2.5 6.2 5 8.5l4.5-5"
-												stroke="currentColor"
-												stroke-width="1.8"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									</span>
-									{benefit}
-								</li>
-							))}
-						</ul>
+						{service.agentGroups && (
+							<div class="svc__agents">
+								{service.agentGroups.map((group) => (
+									<div class="svc__group">
+										<p class="svc__group-label">{group.label}</p>
+										<ul class="svc__asks">
+											{group.agents.map((agent) => (
+												<li>
+													<span class="svc__agent">@{agent.name}</span>
+													<span class="svc__ask">{agent.ask}</span>
+												</li>
+											))}
+										</ul>
+									</div>
+								))}
+							</div>
+						)}
+
+						{service.benefits && (
+							<ul class="svc__benefits">
+								{service.benefits.map((benefit) => (
+									<li>
+										<span class="svc__check" aria-hidden="true">
+											<svg viewBox="0 0 12 12" fill="none">
+												<path
+													d="M2.5 6.2 5 8.5l4.5-5"
+													stroke="currentColor"
+													stroke-width="1.8"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												/>
+											</svg>
+										</span>
+										{benefit}
+									</li>
+								))}
+							</ul>
+						)}
 
 						<div class="svc__cta">
 							<ArrowButton href={service.href} label={`Explore ${service.name}`} />
@@ -344,6 +383,68 @@ const services: Service[] = [
 		height: 12px;
 	}
 
+	/*
+	 * Founder OS: one row per agent, written like a Slack @mention and what someone asks it.
+	 * Rows are grouped by who asks; subgrid keeps the @names in one column across both groups.
+	 */
+	.svc__agents {
+		display: grid;
+		grid-template-columns: max-content minmax(0, 1fr);
+		gap: 22px 14px;
+		margin: 26px 0 0;
+	}
+
+	.svc__group,
+	.svc__asks,
+	.svc__asks li {
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-column: 1 / -1;
+	}
+
+	.svc__group {
+		row-gap: 10px;
+	}
+
+	.svc__group-label {
+		grid-column: 1 / -1;
+		margin: 0;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: #5e5e5e;
+	}
+
+	.svc__asks {
+		row-gap: 10px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.svc__asks li {
+		align-items: center;
+	}
+
+	.svc__agent {
+		justify-self: start;
+		padding: 4px 9px;
+		border-radius: 6px;
+		background: #d9f7cc;
+		font-size: max(14px, calc(14 * var(--u)));
+		font-weight: 600;
+		line-height: 1.4;
+		color: #0c2b15;
+		white-space: nowrap;
+	}
+
+	.svc__ask {
+		font-size: max(16px, calc(16 * var(--u)));
+		line-height: 1.4;
+		color: #1f241f;
+	}
+
 	.svc__cta {
 		margin-top: 32px;
 	}
@@ -422,6 +523,19 @@ const services: Service[] = [
 
 		.svc__headline {
 			font-size: clamp(26px, 7vw, 34px);
+		}
+
+		/* Stack each agent above its line on phones */
+		.svc__agents {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.svc__asks {
+			row-gap: 12px;
+		}
+
+		.svc__asks li {
+			row-gap: 4px;
 		}
 	}
 </style>

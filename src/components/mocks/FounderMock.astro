@@ -1,15 +1,94 @@
 ---
 import MockWindow from './MockWindow.astro';
 
-// Steps appear at `data-at` ms; Services.astro plays them while the card is on screen
-const tools = ['Gmail', 'Calendar', 'Slack', 'Zoom', 'Notion'];
+// Three short Slack exchanges take turns in the same spot: you or someone on your team @mentions an agent,
+// and it replies with the result. Together they tell one story: you hand off work, your team gets answers
+// without asking you, and you see who is waiting on you.
+// Steps appear at `data-at` ms and hide at `data-until`; Services.astro plays them while the card is on screen.
+// Without the script, only the last exchange shows, because it has no `until`.
+const tools = ['Gmail', 'Calendar', 'Slack', 'Jira', 'Stripe'];
 
-const brief = [
-	{ at: 2300, title: '3 things need you today', detail: '', alert: true },
-	{ at: 2800, title: '11:00 Acme call', detail: 'prep notes ready' },
-	{ at: 3300, title: 'Follow-up to Priya', detail: 'drafted in your voice' },
-	{ at: 3800, title: 'Investor update', detail: 'first draft ready' },
-	{ at: 4300, title: '2 promises', detail: 'due this week' },
+interface Person {
+	name: string;
+	initial: string;
+	// Someone on the founder's team, shown with a different avatar colour
+	team?: boolean;
+}
+
+interface Chat {
+	from: Person;
+	agent: string;
+	initials: string;
+	ask: string;
+	reply: string;
+	card: { title: string; rows: [string, string][] };
+	status: string;
+	tone: 'done' | 'waiting';
+	actions?: string[];
+	at: number;
+	until?: number;
+}
+
+const you: Person = { name: 'You', initial: 'Y' };
+const sam: Person = { name: 'Sam', initial: 'S', team: true };
+
+const chats: Chat[] = [
+	{
+		from: you,
+		agent: 'Task Manager',
+		initials: 'TM',
+		ask: 'give the case study to Sam, due Friday',
+		reply: 'Done. Sam has it in Jira.',
+		card: {
+			title: 'Jira · Publish the case study',
+			rows: [
+				['Owner', 'Sam'],
+				['Due', 'Friday'],
+			],
+		},
+		status: 'Assigned',
+		tone: 'done',
+		at: 900,
+		until: 5900,
+	},
+	{
+		from: sam,
+		agent: 'Payment Recovery',
+		initials: 'PR',
+		ask: 'has Acme paid yet?',
+		reply: 'Not yet. They’re 12 days late, so I drafted a reminder.',
+		card: {
+			title: 'Acme Co · Invoice 1042',
+			rows: [
+				['Amount', '$1,800'],
+				['Due', '12 days ago'],
+			],
+		},
+		status: 'Waiting on you',
+		tone: 'waiting',
+		actions: ['Send reminder', 'Edit'],
+		at: 6300,
+		until: 11600,
+	},
+	{
+		from: you,
+		agent: 'Chief of Staff',
+		initials: 'CS',
+		ask: 'who’s waiting on me?',
+		reply: '3 people are waiting on you.',
+		card: {
+			title: 'Waiting on you',
+			rows: [
+				['Sam', 'Approve the Acme reminder'],
+				['Priya', 'Refund over $500'],
+				['Design team', 'Homepage sign-off'],
+			],
+		},
+		status: '3 waiting',
+		tone: 'waiting',
+		actions: ['Open list'],
+		at: 12000,
+	},
 ];
 ---
 
@@ -25,54 +104,67 @@ const brief = [
 		}
 	</ul>
 
-	<MockWindow title="# daily-brief">
-		<div class="msg">
-			<span class="avatar">F</span>
-			<div class="msg__main">
-				<p class="meta">
-					<strong>Founder OS</strong>
-					<span class="badge">APP</span>
-					<span class="time">7:30 AM</span>
-				</p>
+	<MockWindow title="# ops" example>
+		<div class="chats">
+			{
+				chats.map((chat) => (
+					<div class="chat" data-at={chat.at} data-until={chat.until}>
+						<div class="msg">
+							<span class:list={['avatar', 'avatar--person', { 'avatar--team': chat.from.team }]}>
+								{chat.from.initial}
+							</span>
+							<div class="msg__main">
+								<p class="meta">
+									<strong>{chat.from.name}</strong>
+									<span class="time">9:41 AM</span>
+								</p>
+								<p class="text">
+									<span class="mention">@{chat.agent}</span> {chat.ask}
+								</p>
+							</div>
+						</div>
 
-				<div class="stack">
-					<span class="typing" data-at="1100" data-until="1900"><i></i><i></i><i></i></span>
-					<p class="greeting" data-at="1900">Good morning. Here's your Tuesday.</p>
-				</div>
+						<div class="msg" data-at={chat.at + 600}>
+							<span class="avatar">{chat.initials}</span>
+							<div class="msg__main">
+								<p class="meta">
+									<strong>{chat.agent}</strong>
+									<span class="badge">APP</span>
+									<span class="time">9:41 AM</span>
+								</p>
 
-				<ul class="brief">
-					{
-						brief.map((item) => (
-							<li data-at={item.at} class:list={{ 'is-alert': item.alert }}>
-								<span class="icon">
-									{item.alert ? (
-										'!'
-									) : (
-										<svg viewBox="0 0 12 12" fill="none">
-											<path
-												d="M2.5 6.2 5 8.5l4.5-5"
-												stroke="currentColor"
-												stroke-width="1.8"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-											/>
-										</svg>
-									)}
-								</span>
-								<span>
-									<strong>{item.title}</strong>
-									{item.detail && ` · ${item.detail}`}
-								</span>
-							</li>
-						))
-					}
-				</ul>
+								<div class="stack">
+									<span class="typing" data-at={chat.at + 600} data-until={chat.at + 1400}>
+										<i />
+										<i />
+										<i />
+									</span>
+									<p class="text" data-at={chat.at + 1400}>
+										{chat.reply}
+									</p>
+								</div>
 
-				<div class="actions" data-at="5000">
-					<span class="btn btn--dark">Open brief</span>
-					<span class="btn">Approve follow-up</span>
-				</div>
-			</div>
+								<div class="card" data-at={chat.at + 1800}>
+									<p class="card__title">{chat.card.title}</p>
+									{chat.card.rows.map(([label, value]) => (
+										<p class="card__row">
+											<span>{label}</span>
+											<strong>{value}</strong>
+										</p>
+									))}
+								</div>
+
+								<div class="foot" data-at={chat.at + 2300}>
+									<span class:list={['status', `status--${chat.tone}`]}>{chat.status}</span>
+									{chat.actions?.map((label, i) => (
+										<span class:list={['btn', { 'btn--dark': i === 0 }]}>{label}</span>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+				))
+			}
 		</div>
 	</MockWindow>
 </div>
@@ -117,6 +209,18 @@ const brief = [
 		box-shadow: 0 0 0 3px rgba(150, 248, 120, 0.2);
 	}
 
+	/* The exchanges take turns in one spot, so the window keeps its size */
+	.chats {
+		display: grid;
+	}
+
+	.chat {
+		grid-area: 1 / 1;
+		display: grid;
+		align-content: start;
+		gap: 14px;
+	}
+
 	.msg {
 		display: flex;
 		gap: 12px;
@@ -130,9 +234,20 @@ const brief = [
 		height: 36px;
 		border-radius: 9px;
 		background: #0c2b15;
-		font-size: 15px;
+		font-size: 13px;
 		font-weight: 700;
 		color: #96f878;
+	}
+
+	/* People (you and your team) look different from the agents */
+	.avatar--person {
+		background: #e6e9e4;
+		color: #4b514a;
+	}
+
+	.avatar--team {
+		background: #e9e3fb;
+		color: #5b3fa0;
 	}
 
 	.msg__main {
@@ -162,20 +277,28 @@ const brief = [
 		color: #8a9089;
 	}
 
-	/* Typing dots and the greeting share one spot */
+	.text {
+		margin: 2px 0 0;
+		font-size: 14px;
+		line-height: 20px;
+	}
+
+	.mention {
+		padding: 1px 4px;
+		border-radius: 4px;
+		background: #e3f8d9;
+		font-weight: 600;
+		color: #0c2b15;
+	}
+
+	/* Typing dots and the reply share one spot */
 	.stack {
 		display: grid;
-		margin-top: 4px;
+		margin-top: 2px;
 	}
 
 	.stack > * {
 		grid-area: 1 / 1;
-	}
-
-	.greeting {
-		margin: 0;
-		font-size: 14px;
-		line-height: 20px;
 	}
 
 	.typing {
@@ -212,67 +335,67 @@ const brief = [
 		}
 	}
 
-	.brief {
-		display: grid;
-		gap: 8px;
-		margin: 12px 0 0;
-		padding: 0;
-		list-style: none;
+	.card {
+		margin-top: 10px;
+		padding: 10px 12px;
+		border: 1px solid #e6e9e4;
+		border-radius: 10px;
+		background: #fafbf9;
 	}
 
-	.brief li {
+	.card__title {
+		margin: 0 0 4px;
+		font-size: 12px;
+		font-weight: 600;
+		color: #6b716a;
+	}
+
+	.card__row {
 		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 9px 12px;
-		border-radius: 10px;
-		background: #f5f7f4;
+		justify-content: space-between;
+		gap: 12px;
+		margin: 0;
+		padding: 6px 0;
 		font-size: 13px;
-		line-height: 1.35;
 		color: #4b514a;
 	}
 
-	.brief strong {
+	.card__row + .card__row {
+		border-top: 1px solid #eceeea;
+	}
+
+	.card__row strong {
 		font-weight: 600;
 		color: #111111;
 	}
 
-	.icon {
-		flex: none;
-		display: grid;
-		place-items: center;
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		background: #96f878;
-		color: #0c2b15;
-	}
-
-	.icon svg {
-		width: 12px;
-		height: 12px;
-	}
-
-	.brief li.is-alert {
-		background: #fff6e5;
-	}
-
-	.is-alert .icon {
-		background: #ffb020;
-		font-size: 12px;
-		font-weight: 700;
-		color: #ffffff;
-	}
-
-	.actions {
+	.foot {
 		display: flex;
 		flex-wrap: wrap;
+		align-items: center;
 		gap: 8px;
-		margin-top: 14px;
+		margin-top: 10px;
+	}
+
+	.status {
+		padding: 4px 9px;
+		border-radius: 999px;
+		font-size: 11.5px;
+		font-weight: 600;
+	}
+
+	.status--done {
+		background: #e4f8dc;
+		color: #1d6b2c;
+	}
+
+	.status--waiting {
+		background: #fff3dc;
+		color: #8a5a00;
 	}
 
 	.btn {
-		padding: 7px 12px;
+		padding: 6px 11px;
 		border: 1px solid #dfe3dd;
 		border-radius: 8px;
 		font-size: 12px;
