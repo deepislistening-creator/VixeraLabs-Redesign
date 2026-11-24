@@ -2,9 +2,20 @@
 import ArrowButton from './ArrowButton.astro';
 ---
 
+<div class="article-layout">
+<aside class="article-rail" aria-label="Article navigation and audit">
 <nav class="toc" aria-label="On this page"><p class="micro">On this page</p>
 <a href="#takeaways">Key takeaways</a><a href="#definition">What an AI agency does</a><a href="#method">Evaluation methodology</a><a href="#services">Vixera’s services</a><a href="#comparison">Compare your options</a><a href="#industries">Industry fit</a><a href="#proof">Published work</a><a href="#faq">FAQs</a>
 </nav>
+<div class="post-audit">
+	<div>
+		<p class="post-audit__title">What could you automate first?</p>
+		<p class="post-audit__detail">Free 30-minute workflow audit</p>
+	</div>
+	<ArrowButton href="mailto:harsh@vixeralabs.com?subject=Free%20AI%20automation%20audit" label="Get a Free Audit" />
+</div>
+</aside>
+<div class="article-content">
 <section id="takeaways" class="takeaways"><h2>Key takeaways</h2><ul>
 <li><strong>Start with one SOP.</strong> Pick a repeatable task with a clear trigger, owner, and outcome.</li>
 <li><strong>Use rules for predictable steps.</strong> Use AI when a step needs to interpret emails, notes, or varied document formats.</li>
@@ -54,8 +65,7 @@ import ArrowButton from './ArrowButton.astro';
 <details><summary>How should I measure a pilot?</summary><p>Record a baseline before launch. Compare median handling time and error or rework rates at similar volumes, then check how many cases still require staff intervention.</p></details>
 <p>Have an SOP in mind? <a href="mailto:harsh@vixeralabs.com?subject=Free%20AI%20automation%20audit">Book a free automation audit with Vixera Labs</a> to discuss where to start.</p></section>
 
-<div class="post-audit">
-	<ArrowButton href="mailto:harsh@vixeralabs.com?subject=Free%20AI%20automation%20audit" label="Get a Free Audit" />
+</div>
 </div>
 
 <style>
@@ -71,6 +81,8 @@ import ArrowButton from './ArrowButton.astro';
 		gap: 8px 16px;
 	}
 	.toc p { width: 100%; margin: 0; font-weight: 600; }
+	.article-content { min-width: 0; }
+	.article-content > section:first-child { margin-top: 0; }
 	section { margin: 48px 0; scroll-margin-top: 24px; }
 	h2, h3 {
 		font-family: 'Source Serif 4', Georgia, serif;
@@ -99,13 +111,72 @@ import ArrowButton from './ArrowButton.astro';
 	details { padding: 12px 0; border-bottom: 1px solid #cde0cc; }
 	summary { cursor: pointer; font-weight: 600; }
 	.post-audit {
-		position: fixed;
-		right: max(16px, env(safe-area-inset-right));
-		bottom: max(16px, env(safe-area-inset-bottom));
-		z-index: 4;
 		background: #0c2b15;
-		padding: 8px;
-		border-radius: 999px;
-		box-shadow: 0 4px 18px #0c2b1533;
+		color: #fff;
+		padding: 16px;
+	}
+
+	.post-audit__title {
+		font-weight: 600;
+		margin: 0;
+	}
+
+	.post-audit__detail {
+		color: #d5e9d4;
+		font-size: 14px;
+		margin: 4px 0 14px;
+	}
+
+	.post-audit :global(.arrow-btn:focus-visible) {
+		outline-color: #fff;
+	}
+
+	@media (min-width: 1024px) and (min-height: 620px) {
+		.article-layout {
+			display: grid;
+			grid-template-columns: 248px minmax(0, 1fr);
+			gap: 32px;
+			margin-top: 36px;
+		}
+
+		.article-rail {
+			position: sticky;
+			top: 24px;
+			align-self: start;
+		}
+
+		.toc {
+			flex-direction: column;
+			margin: 0 0 16px;
+		}
+	}
+
+	@media (max-width: 1023px), (max-height: 619px) {
+		:global(body:has(.post-audit)) {
+			padding-bottom: calc(88px + env(safe-area-inset-bottom));
+		}
+
+		.post-audit {
+			position: fixed;
+			inset: auto 0 0;
+			z-index: 10;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			padding: 10px max(16px, env(safe-area-inset-right))
+				calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+		}
+
+		.post-audit__detail { margin-bottom: 0; }
+	}
+
+	@media (max-width: 480px) {
+		.post-audit__title { display: none; }
+		.post-audit :global(.arrow-btn) {
+			min-width: 0;
+			padding-inline: 12px;
+			font-size: 13px;
+		}
 	}
 </style>

@@ -91,7 +91,7 @@ const structuredData = {
 		</div>
 	</section>
 
-	<article class="post">
+	<article class:list={['post', { 'post--with-rail': isAutomationGuide }]}>
 		{author && (
 			<div class="post-byline">
 				<img src={author.headshot} alt="" width="56" height="56" />
@@ -249,6 +249,14 @@ const structuredData = {
 		font-weight: 300;
 		line-height: 1.55;
 		color: #5e5e5e;
+	}
+
+	@media (min-width: 1024px) and (min-height: 620px) {
+		.post--with-rail { max-width: 1088px; }
+
+		.post--with-rail > :is(.post-byline, .post-date, .lead) {
+			margin-left: 280px;
+		}
 	}
 
 	@media (max-width: 768px) {
