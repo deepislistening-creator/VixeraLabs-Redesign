@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import ArrowButton from './ArrowButton.astro';
 import banner from '../assets/Banner.png';
+
+const { href = '#contact' } = Astro.props;
 ---
 
 <section class="cta-banner" aria-labelledby="cta-banner-title">
@@ -11,7 +13,7 @@ import banner from '../assets/Banner.png';
 			Book a free 30-minute audit with Vixera Labs. We’ll map your workflows, show you what to automate
 			first and give you a fixed quote.
 		</p>
-		<ArrowButton href="#contact" label="Get a Free Audit" />
+		<ArrowButton href={href} label="Get a Free Audit" />
 	</div>
 
 	<div class="media">

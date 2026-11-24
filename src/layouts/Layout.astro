@@ -24,6 +24,7 @@ const { title = 'VixeraLabs' } = Astro.props;
 		<link rel="icon" href="data:," />
 		<meta name="viewport" content="width=device-width" />
 		<title>{title}</title>
+		<slot name="head" />
 	</head>
 	<body>
 		<slot />

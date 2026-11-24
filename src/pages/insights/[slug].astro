@@ -4,6 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import CtaBanner from '../../components/CtaBanner.astro';
 import Footer from '../../components/Footer.astro';
+import AutomationAgencyArticle from '../../components/AutomationAgencyArticle.astro';
 import blogHero from '../../assets/Blog.png';
 import { articles, type Article } from '../../data/articles';
 
@@ -16,9 +17,37 @@ interface Props {
 }
 
 const { article } = Astro.props;
+const isAutomationGuide = article.slug === 'how-to-choose-an-ai-automation-agency';
+const canonical = new URL(`/insights/${article.slug}`, 'https://vixeralabs-redesign.vercel.app').href;
+const formattedDate = article.published && new Intl.DateTimeFormat('en', {
+	dateStyle: 'medium',
+	timeZone: 'UTC',
+}).format(new Date(article.published));
+const auditUrl = 'mailto:harsh@vixeralabs.com?subject=Free%20AI%20automation%20audit';
+const structuredData = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: article.title,
+	description: article.description,
+	datePublished: article.published,
+	dateModified: article.published,
+	mainEntityOfPage: canonical,
+	publisher: { '@type': 'Organization', name: 'Vixera Labs', url: new URL('/', canonical).href },
+};
 ---
 
 <Layout title={`${article.title} | VixeraLabs`}>
+	{isAutomationGuide && (
+		<Fragment slot="head">
+			<meta name="description" content={article.description} />
+			<link rel="canonical" href={canonical} />
+			<meta property="og:type" content="article" />
+			<meta property="og:title" content={article.title} />
+			<meta property="og:description" content={article.description} />
+			<meta property="og:url" content={canonical} />
+			<script type="application/ld+json" set:html={JSON.stringify(structuredData).replaceAll('<', '\\u003c')} />
+		</Fragment>
+	)}
 	<section class="post-hero">
 		<Image
 			src={article.image ?? blogHero}
@@ -56,11 +85,12 @@ const { article } = Astro.props;
 	</section>
 
 	<article class="post">
-		{/* Article body goes here once the content is ready */}
+		{formattedDate && <p class="post-date">Published <time datetime={article.published}>{formattedDate}</time></p>}
 		<p class="lead">{article.excerpt}</p>
+		{isAutomationGuide && <AutomationAgencyArticle />}
 	</article>
 
-	<CtaBanner />
+	<CtaBanner href={isAutomationGuide ? auditUrl : undefined} />
 	<Footer />
 </Layout>
 
@@ -177,6 +207,8 @@ const { article } = Astro.props;
 		outline-offset: 3px;
 		border-radius: 4px;
 	}
+
+	.post-date { margin: 0 0 12px; color: #5e5e5e; font-size: 14px; }
 
 	.lead {
 		margin: 0;

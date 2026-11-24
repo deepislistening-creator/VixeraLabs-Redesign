@@ -1,4 +1,5 @@
 import type { ImageMetadata } from 'astro';
+import blogHero from '../assets/Blog.png';
 
 export interface Article {
 	// URL segment: the post lives at /insights/<slug>
@@ -7,6 +8,8 @@ export interface Article {
 	title: string;
 	excerpt: string;
 	readTime: string;
+	published?: string;
+	description?: string;
 	image?: ImageMetadata;
 	alt?: string;
 	// Shown until an image is added, and behind it while it loads
@@ -14,6 +17,17 @@ export interface Article {
 }
 
 export const articles: Article[] = [
+	{
+		slug: 'how-to-choose-an-ai-automation-agency',
+		category: 'AI automation',
+		title: 'How to Choose an AI Automation Agency',
+		excerpt: 'Choose an AI automation agency that can map one repeatable workflow, integrate with the tools your team uses, route exceptions to a person, and measure the result against a baseline. Start with a process such as CRM updates, document intake, or lead routing where you can show how the work gets done today.',
+		description: 'Learn how to choose an AI automation agency, compare rules-based tools with custom AI, and scope a first workflow with measurable results.',
+		readTime: '6 min read',
+		published: '2026-11-24',
+		image: blogHero,
+		placeholder: '#0c2b15',
+	},
 	{
 		slug: 'custom-software-development-for-startups',
 		category: 'Startups',
