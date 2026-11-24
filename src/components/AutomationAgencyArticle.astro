@@ -152,31 +152,13 @@ import ArrowButton from './ArrowButton.astro';
 	}
 
 	@media (max-width: 1023px), (max-height: 619px) {
-		:global(body:has(.post-audit)) {
-			padding-bottom: calc(88px + env(safe-area-inset-bottom));
+		.article-rail {
+			margin-bottom: 32px;
 		}
 
-		.post-audit {
-			position: fixed;
-			inset: auto 0 0;
-			z-index: 10;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 12px;
-			padding: 10px max(16px, env(safe-area-inset-right))
-				calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-		}
-
-		.post-audit__detail { margin-bottom: 0; }
-	}
-
-	@media (max-width: 480px) {
-		.post-audit__title { display: none; }
-		.post-audit :global(.arrow-btn) {
-			min-width: 0;
-			padding-inline: 12px;
-			font-size: 13px;
+		.toc {
+			margin-bottom: 16px;
 		}
 	}
+
 </style>

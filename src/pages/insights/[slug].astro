@@ -24,7 +24,6 @@ const formattedDate = article.published && new Intl.DateTimeFormat('en', {
 	dateStyle: 'medium',
 	timeZone: 'UTC',
 }).format(new Date(article.published));
-const auditUrl = 'mailto:harsh@vixeralabs.com?subject=Free%20AI%20automation%20audit';
 const structuredData = {
 	'@context': 'https://schema.org',
 	'@type': 'BlogPosting',
@@ -103,7 +102,7 @@ const structuredData = {
 		{isAutomationGuide && <AutomationAgencyArticle />}
 	</article>
 
-	<CtaBanner href={isAutomationGuide ? auditUrl : undefined} />
+	{!isAutomationGuide && <CtaBanner />}
 	<Footer />
 </Layout>
 
